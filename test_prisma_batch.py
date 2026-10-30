@@ -9,7 +9,7 @@ Part of the Bolti Slip project.
 
 Usage:
     1. Activate the virtual environment:
-           .\.venv\Scripts\Activate.ps1
+           ./.venv/Scripts/Activate.ps1
     2. Ensure GNANI_API_KEY_ID is set in .env
     3. Place test_01.wav through test_05.wav in the project root.
     4. Run:
