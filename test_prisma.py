@@ -57,6 +57,17 @@ if not AUDIO_FILE.exists():
     print(f"[ERROR] Audio file not found: {AUDIO_FILE}")
     sys.exit(1)
 
+with AUDIO_FILE.open("rb") as f:
+    header = f.read(12)
+    if AUDIO_FILE.suffix.lower() == ".wav" and not header.startswith(b"RIFF"):
+        print(
+            f"[WARNING] '{AUDIO_FILE.name}' does not have a valid RIFF header!\n"
+            f"          Header bytes: {header}\n"
+            f"          If this is an M4A/AAC recording renamed to .wav, ffmpeg will fail on the API.\n"
+            f"          Please convert it using:\n"
+            f"          ffmpeg -i {AUDIO_FILE.name} -c:a pcm_s16le -ar 16000 -ac 1 output.wav\n"
+        )
+
 
 # ---------------------------------------------------------------------------
 # Send request
@@ -76,10 +87,20 @@ form_data = {
     "format": "codemix",
 }
 
+mime_types = {
+    ".wav": "audio/wav",
+    ".mp3": "audio/mpeg",
+    ".m4a": "audio/mp4",
+    ".mp4": "audio/mp4",
+    ".ogg": "audio/ogg",
+    ".flac": "audio/flac",
+}
+content_type = mime_types.get(AUDIO_FILE.suffix.lower(), "audio/wav")
+
 try:
     with AUDIO_FILE.open("rb") as audio:
         files = {
-            "audio_file": (AUDIO_FILE.name, audio, "audio/wav"),
+            "audio_file": (AUDIO_FILE.name, audio, content_type),
         }
         response = requests.post(
             API_ENDPOINT,
