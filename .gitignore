@@ -1,5 +1,6 @@
 # Secrets — never commit these
 .env
+backend/.env
 
 # Virtual environment
 .venv/
@@ -8,3 +9,17 @@
 __pycache__/
 *.pyc
 *.pyo
+
+# Database
+bolti_slip.db
+
+# Uploaded temp audio
+backend/uploads/
+
+# Frontend build output
+frontend/dist/
+frontend/node_modules/
+
+# OS
+.DS_Store
+Thumbs.db

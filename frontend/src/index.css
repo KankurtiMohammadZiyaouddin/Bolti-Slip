@@ -1,0 +1,67 @@
+/* src/index.css — global styles for Bolti Slip */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --color-bg:        #f4f6f9;
+  --color-surface:   #ffffff;
+  --color-primary:   #1976d2;
+  --color-primary-h: #1565c0;
+  --color-danger:    #d32f2f;
+  --color-success:   #388e3c;
+  --color-warning:   #f57c00;
+  --color-text:      #1a1a2e;
+  --color-muted:     #6b7280;
+  --color-border:    #e0e0e0;
+  --radius:          8px;
+  --shadow:          0 1px 4px rgba(0,0,0,.12);
+  font-family: 'Noto Sans', 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+}
+
+a { color: var(--color-primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: var(--radius);
+  padding: .6rem 1.2rem;
+  font-size: .95rem;
+  font-weight: 600;
+  transition: background .15s, transform .1s;
+}
+button:active { transform: scale(.97); }
+
+.btn-primary   { background: var(--color-primary);   color: #fff; }
+.btn-primary:hover { background: var(--color-primary-h); }
+.btn-danger    { background: var(--color-danger);    color: #fff; }
+.btn-success   { background: var(--color-success);   color: #fff; }
+.btn-secondary { background: #e0e0e0; color: var(--color-text); }
+.btn-secondary:hover { background: #d0d0d0; }
+
+.card {
+  background: var(--color-surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1.25rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: .2rem .65rem;
+  border-radius: 999px;
+  font-size: .78rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.badge-open        { background: #e3f2fd; color: #1565c0; }
+.badge-in_progress { background: #fff8e1; color: #e65100; }
+.badge-resolved    { background: #e8f5e9; color: #1b5e20; }
+.badge-closed      { background: #f3e5f5; color: #4a148c; }
