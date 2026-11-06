@@ -18,6 +18,7 @@ export default function App() {
         <Route path="/new" element={<Navigate to="/new-ticket" replace />} />
         <Route path="/tickets" element={<TicketHistoryPage />} />
         <Route path="/tickets/:id" element={<ReviewTicketPage />} />
+        <Route path="/review-ticket" element={<ReviewTicketPage />} />
         <Route path="/settings" element={<SettingsPage />} />
 
         {/* Fallback route */}

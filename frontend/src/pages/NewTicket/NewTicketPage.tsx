@@ -1,6 +1,6 @@
 // src/pages/NewTicket/NewTicketPage.tsx
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import VoiceRecorder from '../../components/VoiceRecorder';
 import TicketForm from '../../components/TicketForm';
 import AudioPlayer from '../../components/AudioPlayer';
@@ -8,6 +8,7 @@ import { confirmTicket, extractTranscript } from '../../api/client';
 import type { ExtractionResult, Ticket, TranscribeResult } from '../../types/ticket';
 
 export default function NewTicketPage() {
+  const navigate = useNavigate();
   const [transcript, setTranscript] = useState('');
   const [extraction, setExtraction] = useState<ExtractionResult | null>(null);
   const [extracting, setExtracting] = useState(false);
@@ -51,7 +52,9 @@ export default function NewTicketPage() {
       const url = URL.createObjectURL(audioBlob);
       setConfirmAudioUrl(url);
     } catch (err) {
-      setConfirmError(err instanceof Error ? err.message : 'आवाज़ पुष्टि लोड करने में असमर्थ।');
+      // Audio failure does NOT lose the saved ticket
+      console.warn('Audio confirmation failed:', err);
+      setConfirmError('आवाज़ पुष्टि लोड करने में असमर्थ। पर्ची सुरक्षित है।');
     } finally {
       setPlayingConfirm(false);
     }
@@ -106,9 +109,9 @@ export default function NewTicketPage() {
           <div className="flex items-center gap-3">
             <Link
               to={`/tickets/${createdTicket.id}`}
-              className="px-5 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md transition-colors"
+              className="px-5 py-2.5 rounded-xl bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md transition-colors font-semibold"
             >
-              विवरण देखें (Ticket Details) →
+              विवरण देखें (Review Ticket Details) →
             </Link>
             <button
               onClick={() => {
@@ -153,6 +156,20 @@ export default function NewTicketPage() {
           {extractError && (
             <div className="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 font-label-sm">
               {extractError}
+            </div>
+          )}
+
+          {/* Option to navigate to dedicated Review Ticket screen */}
+          {extraction && (
+            <div className="pt-2 border-t border-outline-variant/40 flex justify-end">
+              <button
+                type="button"
+                onClick={() => navigate('/review-ticket', { state: { extraction, transcript } })}
+                className="w-full py-2.5 px-4 rounded-xl border border-primary text-primary hover:bg-primary/5 font-label-md flex items-center justify-center gap-1.5 transition-colors cursor-pointer font-semibold"
+              >
+                <span>विस्तृत रिव्यू स्क्रीन खोलें (Open Dedicated Review Screen)</span>
+                <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </button>
             </div>
           )}
         </section>

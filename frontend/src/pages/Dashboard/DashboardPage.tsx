@@ -184,49 +184,90 @@ export default function DashboardPage() {
               </p>
             </div>
           ) : (
-            <div className="w-full overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="bg-surface-container-low text-secondary font-label-xs text-label-xs uppercase tracking-wider">
-                    <th className="py-3 px-4 rounded-l-lg font-semibold" scope="col">Ticket ID</th>
-                    <th className="py-3 px-4 font-semibold" scope="col">Customer</th>
-                    <th className="py-3 px-4 font-semibold" scope="col">Device</th>
-                    <th className="py-3 px-4 font-semibold" scope="col">Date</th>
-                    <th className="py-3 px-4 font-semibold" scope="col">Status</th>
-                    <th className="py-3 px-4 rounded-r-lg font-semibold text-right" scope="col">Action</th>
-                  </tr>
-                </thead>
-                <tbody className="font-body-md text-body-md text-on-surface divide-y divide-outline-variant/50">
-                  {recentTickets.map((ticket) => (
-                    <tr key={ticket.id} className="hover:bg-surface-container-low transition-colors group">
-                      <td className="py-3.5 px-4 font-label-md text-label-md text-primary font-semibold font-mono">
-                        {ticket.ticket_number}
-                      </td>
-                      <td className="py-3.5 px-4 font-medium text-on-surface">
-                        {ticket.customer_name || '—'}
-                      </td>
-                      <td className="py-3.5 px-4 text-on-surface-variant font-body-sm text-body-sm">
-                        {ticket.device_description}
-                      </td>
-                      <td className="py-3.5 px-4 text-secondary font-body-sm text-body-sm">
-                        {formatDate(ticket.created_at)}
-                      </td>
-                      <td className="py-3.5 px-4">
-                        <StatusBadge status={ticket.status} />
-                      </td>
-                      <td className="py-3.5 px-4 text-right">
-                        <Link
-                          to={`/tickets/${ticket.id}`}
-                          className="font-label-sm text-label-sm text-primary hover:text-primary-container font-medium px-2.5 py-1 rounded hover:bg-surface-container transition-colors inline-block"
-                        >
-                          View
-                        </Link>
-                      </td>
+            <>
+              {/* Mobile Card List (Visible on mobile screens) */}
+              <div className="md:hidden flex flex-col gap-3">
+                {recentTickets.map((ticket) => (
+                  <Link
+                    key={ticket.id}
+                    to={`/tickets/${ticket.id}`}
+                    className="bg-surface-container-low/60 rounded-xl p-3.5 border border-outline-variant/60 flex flex-col gap-2 hover:bg-surface-container-low transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex flex-col min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-label-md text-label-md text-primary font-bold font-mono">
+                            {ticket.ticket_number}
+                          </span>
+                          <span className="text-secondary text-[11px]">•</span>
+                          <span className="font-body-md text-body-md text-on-surface truncate font-semibold">
+                            {ticket.customer_name || 'Walk-in Customer'}
+                          </span>
+                        </div>
+                        <span className="font-body-sm text-body-sm text-secondary truncate mt-0.5">
+                          {ticket.device_description}
+                        </span>
+                      </div>
+                      <StatusBadge status={ticket.status} />
+                    </div>
+                    {ticket.reported_problem && (
+                      <div className="text-secondary text-[12px] bg-surface-container-lowest rounded-lg px-2.5 py-1 truncate">
+                        "{ticket.reported_problem}"
+                      </div>
+                    )}
+                    <div className="flex justify-between items-center text-[11px] text-secondary">
+                      <span>{formatDate(ticket.created_at)}</span>
+                      <span className="text-primary font-semibold">View Slip →</span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+
+              {/* Desktop Table View (Hidden on mobile) */}
+              <div className="hidden md:block w-full overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-surface-container-low text-secondary font-label-xs text-label-xs uppercase tracking-wider">
+                      <th className="py-3 px-4 rounded-l-lg font-semibold" scope="col">Ticket ID</th>
+                      <th className="py-3 px-4 font-semibold" scope="col">Customer</th>
+                      <th className="py-3 px-4 font-semibold" scope="col">Device</th>
+                      <th className="py-3 px-4 font-semibold" scope="col">Date</th>
+                      <th className="py-3 px-4 font-semibold" scope="col">Status</th>
+                      <th className="py-3 px-4 rounded-r-lg font-semibold text-right" scope="col">Action</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="font-body-md text-body-md text-on-surface divide-y divide-outline-variant/50">
+                    {recentTickets.map((ticket) => (
+                      <tr key={ticket.id} className="hover:bg-surface-container-low transition-colors group">
+                        <td className="py-3.5 px-4 font-label-md text-label-md text-primary font-semibold font-mono">
+                          {ticket.ticket_number}
+                        </td>
+                        <td className="py-3.5 px-4 font-medium text-on-surface">
+                          {ticket.customer_name || '—'}
+                        </td>
+                        <td className="py-3.5 px-4 text-on-surface-variant font-body-sm text-body-sm">
+                          {ticket.device_description}
+                        </td>
+                        <td className="py-3.5 px-4 text-secondary font-body-sm text-body-sm">
+                          {formatDate(ticket.created_at)}
+                        </td>
+                        <td className="py-3.5 px-4">
+                          <StatusBadge status={ticket.status} />
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          <Link
+                            to={`/tickets/${ticket.id}`}
+                            className="font-label-sm text-label-sm text-primary hover:text-primary-container font-medium px-2.5 py-1 rounded hover:bg-surface-container transition-colors inline-block"
+                          >
+                            View
+                          </Link>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </>
           )}
         </div>
 

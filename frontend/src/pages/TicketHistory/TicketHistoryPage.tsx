@@ -127,80 +127,113 @@ export default function TicketHistoryPage() {
 
       {/* Tickets Table / List */}
       <div className="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden flex flex-col">
-        <div className="overflow-x-auto w-full">
-          <table className="w-full text-left border-collapse min-w-[760px]">
-            <thead>
-              <tr className="bg-surface-container-low border-b border-outline-variant">
-                <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
-                  Ticket ID
-                </th>
-                <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
-                  Customer
-                </th>
-                <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
-                  Device
-                </th>
-                <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
-                  Date
-                </th>
-                <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
-                  Status
-                </th>
-                <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold text-right">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody className="font-body-md text-body-md text-on-surface divide-y divide-outline-variant">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-secondary">
-                    लोड हो रहा है…
-                  </td>
-                </tr>
-              ) : filteredTickets.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-secondary">
-                    कोई पर्ची नहीं मिली (No tickets found).
-                  </td>
-                </tr>
-              ) : (
-                filteredTickets.map((ticket) => (
-                  <tr key={ticket.id} className="hover:bg-surface-container-low transition-colors group">
-                    <td className="py-4 px-6 font-label-md text-label-md text-primary font-semibold font-mono">
-                      {ticket.ticket_number}
-                    </td>
-                    <td className="py-4 px-6 font-medium text-on-surface">
-                      {ticket.customer_name || '—'}
-                      {ticket.customer_phone && (
-                        <div className="font-body-sm text-body-sm text-secondary">
-                          {ticket.customer_phone}
-                        </div>
-                      )}
-                    </td>
-                    <td className="py-4 px-6 text-on-surface-variant font-body-sm text-body-sm max-w-xs truncate">
-                      {ticket.device_description}
-                    </td>
-                    <td className="py-4 px-6 text-secondary font-body-sm text-body-sm">
-                      {formatDate(ticket.created_at)}
-                    </td>
-                    <td className="py-4 px-6">
-                      <StatusBadge status={ticket.status} />
-                    </td>
-                    <td className="py-4 px-6 text-right">
-                      <Link
-                        to={`/tickets/${ticket.id}`}
-                        className="font-label-sm text-label-sm text-primary hover:text-primary-container font-semibold px-3 py-1.5 rounded-lg hover:bg-surface-container transition-colors inline-block"
-                      >
-                        View Slip →
-                      </Link>
-                    </td>
+        {loading ? (
+          <div className="py-12 text-center text-secondary font-body-md">लोड हो रहा है…</div>
+        ) : filteredTickets.length === 0 ? (
+          <div className="py-12 text-center text-secondary font-body-md">कोई पर्ची नहीं मिली (No tickets found).</div>
+        ) : (
+          <>
+            {/* Mobile Touch Cards View (md:hidden) */}
+            <div className="md:hidden flex flex-col divide-y divide-outline-variant">
+              {filteredTickets.map((ticket) => (
+                <Link
+                  key={ticket.id}
+                  to={`/tickets/${ticket.id}`}
+                  className="p-4 flex flex-col gap-2 hover:bg-surface-container-low transition-colors"
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex flex-col min-w-0">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-label-md text-label-md text-primary font-bold font-mono">
+                          {ticket.ticket_number}
+                        </span>
+                        <span className="text-secondary text-[11px]">•</span>
+                        <span className="font-body-md text-body-md text-on-surface truncate font-semibold">
+                          {ticket.customer_name || 'Walk-in Customer'}
+                        </span>
+                      </div>
+                      <span className="font-body-sm text-body-sm text-secondary truncate mt-0.5">
+                        {ticket.device_description}
+                      </span>
+                    </div>
+                    <StatusBadge status={ticket.status} />
+                  </div>
+                  {ticket.reported_problem && (
+                    <div className="text-secondary text-[12px] bg-surface-container-low rounded-lg px-2.5 py-1 truncate">
+                      "{ticket.reported_problem}"
+                    </div>
+                  )}
+                  <div className="flex justify-between items-center text-[11px] text-secondary">
+                    <span>{formatDate(ticket.created_at)}</span>
+                    <span className="text-primary font-semibold">View Details →</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Desktop Table View (Hidden on mobile) */}
+            <div className="hidden md:block overflow-x-auto w-full">
+              <table className="w-full text-left border-collapse min-w-[760px]">
+                <thead>
+                  <tr className="bg-surface-container-low border-b border-outline-variant">
+                    <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
+                      Ticket ID
+                    </th>
+                    <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
+                      Customer
+                    </th>
+                    <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
+                      Device
+                    </th>
+                    <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
+                      Date
+                    </th>
+                    <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold">
+                      Status
+                    </th>
+                    <th className="py-3.5 px-6 font-label-sm text-label-sm text-secondary uppercase tracking-wider font-semibold text-right">
+                      Action
+                    </th>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
+                </thead>
+                <tbody className="font-body-md text-body-md text-on-surface divide-y divide-outline-variant">
+                  {filteredTickets.map((ticket) => (
+                    <tr key={ticket.id} className="hover:bg-surface-container-low transition-colors group">
+                      <td className="py-4 px-6 font-label-md text-label-md text-primary font-semibold font-mono">
+                        {ticket.ticket_number}
+                      </td>
+                      <td className="py-4 px-6 font-medium text-on-surface">
+                        {ticket.customer_name || '—'}
+                        {ticket.customer_phone && (
+                          <div className="font-body-sm text-body-sm text-secondary">
+                            {ticket.customer_phone}
+                          </div>
+                        )}
+                      </td>
+                      <td className="py-4 px-6 text-on-surface-variant font-body-sm text-body-sm max-w-xs truncate">
+                        {ticket.device_description}
+                      </td>
+                      <td className="py-4 px-6 text-secondary font-body-sm text-body-sm">
+                        {formatDate(ticket.created_at)}
+                      </td>
+                      <td className="py-4 px-6">
+                        <StatusBadge status={ticket.status} />
+                      </td>
+                      <td className="py-4 px-6 text-right">
+                        <Link
+                          to={`/tickets/${ticket.id}`}
+                          className="font-label-sm text-label-sm text-primary hover:text-primary-container font-semibold px-3 py-1.5 rounded-lg hover:bg-surface-container transition-colors inline-block"
+                        >
+                          View Slip →
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

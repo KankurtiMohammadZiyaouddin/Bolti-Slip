@@ -133,7 +133,7 @@ _COST_PATTERNS: list[re.Pattern[str]] = [
     # ₹500 or Rs 500 or Rs. 500
     re.compile(r"₹\s*(\d[\d,]*(?:\.\d{1,2})?)", re.IGNORECASE),
     re.compile(r"\brs\.?\s*(\d[\d,]*(?:\.\d{1,2})?)", re.IGNORECASE),
-    re.compile(r"\b(\d[\d,]*(?:\.\d{1,2})?)\s*(?:rs\.?|rupees?|रुपये|रुपए|रू\.?)\b", re.IGNORECASE),
+    re.compile(r"\b(\d[\d,]*(?:\.\d{1,2})?)\s*(?:rs\.?|rupees?|rupaye?|rupay|rupai|rupiya|रुपये|रुपए|रू\.?)\b", re.IGNORECASE),
     # "500 bucks" colloquial
     re.compile(r"\b(\d[\d,]*)\s*bucks?\b", re.IGNORECASE),
 ]
