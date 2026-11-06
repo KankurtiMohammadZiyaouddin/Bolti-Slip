@@ -41,3 +41,23 @@ export interface TicketCreate {
   expected_delivery?: string;
   estimated_cost?: number;
 }
+
+export interface ExtractedFields {
+  customer_name: string | null;
+  customer_phone: string | null;
+  device_description: string | null;
+  reported_problem: string | null;
+  repair_instructions: string | null;
+  expected_delivery: string | null;
+  estimated_cost: number | null;
+  transcript_raw: string | null;
+}
+
+export interface ExtractionResult {
+  success: boolean;
+  fields: ExtractedFields;
+  missing_fields: string[];
+  needs_confirmation: string[];
+  unresolved_phrases: string[];
+}
+

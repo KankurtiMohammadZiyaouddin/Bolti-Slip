@@ -1,67 +1,121 @@
-/* src/index.css — global styles for Bolti Slip */
+@import "tailwindcss";
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+@theme {
+  --color-surface-tint: #4d44e3;
+  --color-on-primary-fixed: #0f0069;
+  --color-on-tertiary-fixed: #2a1700;
+  --color-surface-container-highest: #d5e3fd;
+  --color-on-secondary-container: #5c647a;
+  --color-on-primary: #ffffff;
+  --color-secondary-fixed-dim: #bec6e0;
+  --color-on-surface-variant: #464555;
+  --color-on-primary-container: #dad7ff;
+  --color-error-container: #ffdad6;
+  --color-on-surface: #0d1c2f;
+  --color-secondary-container: #dae2fd;
+  --color-surface-container-high: #dde9ff;
+  --color-surface: #f8f9ff;
+  --color-on-secondary-fixed-variant: #3f465c;
+  --color-primary: #3525cd;
+  --color-on-primary-fixed-variant: #3323cc;
+  --color-surface-dim: #ccdbf4;
+  --color-primary-fixed: #e2dfff;
+  --color-outline-variant: #c7c4d8;
+  --color-surface-variant: #d5e3fd;
+  --color-surface-container: #e6eeff;
+  --color-inverse-on-surface: #ebf1ff;
+  --color-on-tertiary: #ffffff;
+  --color-inverse-surface: #233144;
+  --color-secondary: #565e74;
+  --color-on-tertiary-fixed-variant: #653e00;
+  --color-surface-container-low: #eff4ff;
+  --color-on-tertiary-container: #ffd4a4;
+  --color-outline: #777587;
+  --color-surface-bright: #f8f9ff;
+  --color-on-error: #ffffff;
+  --color-on-background: #0d1c2f;
+  --color-primary-fixed-dim: #c3c0ff;
+  --color-error: #ba1a1a;
+  --color-tertiary-fixed-dim: #ffb95f;
+  --color-tertiary-container: #885500;
+  --color-surface-container-lowest: #ffffff;
+  --color-on-error-container: #93000a;
+  --color-primary-container: #4f46e5;
+  --color-secondary-fixed: #dae2fd;
+  --color-background: #f8f9ff;
+  --color-inverse-primary: #c3c0ff;
+  --color-tertiary-fixed: #ffddb8;
+  --color-on-secondary: #ffffff;
+  --color-tertiary: #684000;
+  --color-on-secondary-fixed: #131b2e;
 
-:root {
-  --color-bg:        #f4f6f9;
-  --color-surface:   #ffffff;
-  --color-primary:   #1976d2;
-  --color-primary-h: #1565c0;
-  --color-danger:    #d32f2f;
-  --color-success:   #388e3c;
-  --color-warning:   #f57c00;
-  --color-text:      #1a1a2e;
-  --color-muted:     #6b7280;
-  --color-border:    #e0e0e0;
-  --radius:          8px;
-  --shadow:          0 1px 4px rgba(0,0,0,.12);
-  font-family: 'Noto Sans', 'Segoe UI', system-ui, sans-serif;
+  --spacing-space-xs: 0.25rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-space-md: 1rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2rem;
+  --spacing-gutter: 1.5rem;
+  --spacing-margin: 2rem;
+
+  --font-headline-lg: 'Inter', sans-serif;
+  --font-headline-md: 'Inter', sans-serif;
+  --font-headline-sm: 'Inter', sans-serif;
+  --font-body-lg: 'Inter', sans-serif;
+  --font-body-md: 'Inter', sans-serif;
+  --font-body-sm: 'Inter', sans-serif;
+  --font-label-md: 'Inter', sans-serif;
+  --font-label-sm: 'Inter', sans-serif;
+  --font-label-xs: 'Inter', sans-serif;
 }
 
-body {
-  background: var(--color-bg);
-  color: var(--color-text);
-  min-height: 100vh;
+@layer base {
+  html, body {
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9ff;
+    color: #0d1c2f;
+    font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Support Android safe-areas for PWA */
+  body {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
 }
 
-a { color: var(--color-primary); text-decoration: none; }
-a:hover { text-decoration: underline; }
-
-button {
-  cursor: pointer;
-  border: none;
-  border-radius: var(--radius);
-  padding: .6rem 1.2rem;
-  font-size: .95rem;
-  font-weight: 600;
-  transition: background .15s, transform .1s;
-}
-button:active { transform: scale(.97); }
-
-.btn-primary   { background: var(--color-primary);   color: #fff; }
-.btn-primary:hover { background: var(--color-primary-h); }
-.btn-danger    { background: var(--color-danger);    color: #fff; }
-.btn-success   { background: var(--color-success);   color: #fff; }
-.btn-secondary { background: #e0e0e0; color: var(--color-text); }
-.btn-secondary:hover { background: #d0d0d0; }
-
-.card {
-  background: var(--color-surface);
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
-  padding: 1.25rem;
-}
-
-.badge {
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
   display: inline-block;
-  padding: .2rem .65rem;
-  border-radius: 999px;
-  font-size: .78rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .04em;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'liga';
 }
-.badge-open        { background: #e3f2fd; color: #1565c0; }
-.badge-in_progress { background: #fff8e1; color: #e65100; }
-.badge-resolved    { background: #e8f5e9; color: #1b5e20; }
-.badge-closed      { background: #f3e5f5; color: #4a148c; }
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

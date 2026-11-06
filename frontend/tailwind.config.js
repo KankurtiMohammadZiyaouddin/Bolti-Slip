@@ -1,0 +1,80 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      colors: {
+        "surface-tint": "#4d44e3",
+        "on-primary-fixed": "#0f0069",
+        "on-tertiary-fixed": "#2a1700",
+        "surface-container-highest": "#d5e3fd",
+        "on-secondary-container": "#5c647a",
+        "on-primary": "#ffffff",
+        "secondary-fixed-dim": "#bec6e0",
+        "on-surface-variant": "#464555",
+        "on-primary-container": "#dad7ff",
+        "error-container": "#ffdad6",
+        "on-surface": "#0d1c2f",
+        "secondary-container": "#dae2fd",
+        "surface-container-high": "#dde9ff",
+        "surface": "#f8f9ff",
+        "on-secondary-fixed-variant": "#3f465c",
+        "primary": "#3525cd",
+        "on-primary-fixed-variant": "#3323cc",
+        "surface-dim": "#ccdbf4",
+        "primary-fixed": "#e2dfff",
+        "outline-variant": "#c7c4d8",
+        "surface-variant": "#d5e3fd",
+        "surface-container": "#e6eeff",
+        "inverse-on-surface": "#ebf1ff",
+        "on-tertiary": "#ffffff",
+        "inverse-surface": "#233144",
+        "secondary": "#565e74",
+        "on-tertiary-fixed-variant": "#653e00",
+        "surface-container-low": "#eff4ff",
+        "on-tertiary-container": "#ffd4a4",
+        "outline": "#777587",
+        "surface-bright": "#f8f9ff",
+        "on-error": "#ffffff",
+        "on-background": "#0d1c2f",
+        "primary-fixed-dim": "#c3c0ff",
+        "error": "#ba1a1a",
+        "tertiary-fixed-dim": "#ffb95f",
+        "tertiary-container": "#885500",
+        "surface-container-lowest": "#ffffff",
+        "on-error-container": "#93000a",
+        "primary-container": "#4f46e5",
+        "secondary-fixed": "#dae2fd",
+        "background": "#f8f9ff",
+        "inverse-primary": "#c3c0ff",
+        "tertiary-fixed": "#ffddb8",
+        "on-secondary": "#ffffff",
+        "tertiary": "#684000",
+        "on-secondary-fixed": "#131b2e"
+      },
+      borderRadius: {
+        DEFAULT: "0.25rem",
+        lg: "0.5rem",
+        xl: "0.75rem",
+        "2xl": "1rem",
+        full: "9999px"
+      },
+      spacing: {
+        "space-xs": "0.25rem",
+        "space-sm": "0.5rem",
+        "space-md": "1rem",
+        "space-lg": "1.5rem",
+        "space-xl": "2rem",
+        gutter: "1.5rem",
+        margin: "2rem"
+      },
+      fontFamily: {
+        sans: ["Inter", "Noto Sans Devanagari", "sans-serif"]
+      }
+    },
+  },
+  plugins: [],
+}

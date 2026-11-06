@@ -1,0 +1,18 @@
+{
+  "name": "Bolti Slip — बोलती स्लिप",
+  "short_name": "Bolti Slip",
+  "description": "AI-powered voice-to-repair-ticket application for electronics and appliance repair shops",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F8FAFC",
+  "theme_color": "#4F46E5",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 // Typed API wrappers for the Bolti Slip FastAPI backend.
 // All requests go to /api/* — proxied to http://localhost:8000 by Vite.
 
-import type { Ticket, TicketCreate, TicketStatus, TranscribeResult } from '../types/ticket';
+import type { ExtractionResult, Ticket, TicketCreate, TicketStatus, TranscribeResult } from '../types/ticket';
 
 const BASE = '/api';
 
@@ -29,6 +29,19 @@ export async function transcribeAudio(audioBlob: Blob, filename = 'audio.wav'): 
   form.append('audio_file', audioBlob, filename);
   const res = await fetch(`${BASE}/transcribe`, { method: 'POST', body: form });
   return handleResponse<TranscribeResult>(res);
+}
+
+// ---------------------------------------------------------------------------
+// Extraction
+// ---------------------------------------------------------------------------
+
+export async function extractTranscript(transcript: string): Promise<ExtractionResult> {
+  const res = await fetch(`${BASE}/extract`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ transcript }),
+  });
+  return handleResponse<ExtractionResult>(res);
 }
 
 // ---------------------------------------------------------------------------

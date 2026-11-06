@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary-fixed-dim": "#bec6e0", "secondary-container": "#dae2fd", "tertiary-fixed-dim": "#ffb95f", "on-tertiary-container": "#ffd4a4", "surface-tint": "#4d44e3", "on-error-container": "#93000a", "primary-container": "#4f46e5", "outline-variant": "#c7c4d8", "surface-container-lowest": "#ffffff", "on-secondary": "#ffffff", "inverse-surface": "#233144", "surface-container": "#e6eeff", "surface": "#f8f9ff", "tertiary-container": "#885500", "on-surface-variant": "#464555", "primary": "#3525cd", "on-background": "#0d1c2f", "surface-container-high": "#dde9ff", "surface-variant": "#d5e3fd", "on-secondary-container": "#5c647a", "on-tertiary-fixed": "#2a1700", "inverse-primary": "#c3c0ff", "surface-dim": "#ccdbf4", "primary-fixed": "#e2dfff", "secondary-fixed": "#dae2fd", "secondary": "#565e74", "primary-fixed-dim": "#c3c0ff", "surface-container-low": "#eff4ff", "on-primary-container": "#dad7ff", "on-secondary-fixed-variant": "#3f465c", "tertiary-fixed": "#ffddb8", "surface-container-highest": "#d5e3fd", "surface-bright": "#f8f9ff", "tertiary": "#684000", "inverse-on-surface": "#ebf1ff", "error": "#ba1a1a", "error-container": "#ffdad6", "on-tertiary-fixed-variant": "#653e00", "on-error": "#ffffff", "on-tertiary": "#ffffff", "on-secondary-fixed": "#131b2e", "outline": "#777587", "on-primary": "#ffffff", "on-surface": "#0d1c2f", "background": "#f8f9ff", "on-primary-fixed-variant": "#3323cc", "on-primary-fixed": "#0f0069" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "gutter": "1.5rem", "space-xl": "2rem", "space-xs": "0.25rem", "margin": "2rem", "space-lg": "1.5rem", "space-md": "1rem", "space-sm": "0.5rem" }, fontFamily: { "headline-md": ["Inter"], "body-sm": ["Inter"], "body-md": ["Inter"], "headline-sm": ["Inter"], "label-md": ["Inter"], "headline-lg": ["Inter"], "label-xs": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"] }, fontSize: { "headline-md": ["22px", { lineHeight: "28px", fontWeight: "600" }], "body-sm": ["13px", { lineHeight: "18px", fontWeight: "400" }], "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }], "headline-sm": ["18px", { lineHeight: "24px", fontWeight: "600" }], "label-md": ["14px", { lineHeight: "20px", fontWeight: "500" }], "headline-lg": ["28px", { lineHeight: "36px", fontWeight: "600" }], "label-xs": ["11px", { lineHeight: "14px", fontWeight: "600" }], "label-sm": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "600" }], "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface font-body-md text-body-md text-on-surface flex flex-col min-h-screen"><header class="fixed top-0 inset-x-0 z-50 bg-surface/80 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="h-16 px-space-md flex items-center justify-between"><div class="flex items-center gap-space-sm"><div class="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[20px]">mic</span></div><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">Bolti Slip</span><span class="font-label-xs text-label-xs text-on-surface-variant font-medium">Sharma Electronics</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Notifications" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined text-[22px]">notifications</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-surface"><div class="flex flex-col w-full px-space-md py-space-md gap-space-md">
+<!-- Header Section -->
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<h1 class="font-headline-md text-headline-md text-on-surface tracking-tight">Ticket History</h1>
+<span class="font-body-sm text-body-sm text-secondary">128 repair slips recorded</span>
+</div>
+<button class="h-10 px-space-md bg-surface-container-lowest text-secondary shadow-sm rounded-lg flex items-center gap-space-xs active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span class="font-label-md text-label-md">Export</span>
+</button>
+</div>
+<!-- Search & Quick Filters -->
+<div class="flex flex-col gap-space-sm">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-secondary text-[20px] pointer-events-none">search</span>
+<input class="w-full h-10 pl-10 pr-space-md bg-surface-container-lowest text-on-surface placeholder:text-outline font-body-md text-body-md rounded-lg shadow-sm focus:outline-none focus:bg-surface-container-low transition-all" id="ticketSearch" placeholder="Search name, device, ticket ID..." type="search"/>
+</div>
+<!-- Scrollable Filter Chips -->
+<div class="flex items-center gap-space-xs overflow-x-auto pb-1 -mx-space-md px-space-md" id="filterContainer">
+<button class="filter-chip whitespace-nowrap h-8 px-space-md rounded-full bg-primary-container text-on-primary font-label-sm text-label-sm shadow-sm transition-all flex items-center gap-1.5" data-filter="all" type="button">
+<span>All</span>
+<span class="bg-surface-container-lowest/20 px-1.5 py-0.5 rounded-full text-label-xs font-label-xs">128</span>
+</button>
+<button class="filter-chip whitespace-nowrap h-8 px-space-md rounded-full bg-surface-container-lowest text-secondary font-label-sm text-label-sm shadow-sm transition-all flex items-center gap-1.5 hover:bg-surface-container-low" data-filter="pending" type="button">
+<span>Pending</span>
+<span class="bg-surface-container px-1.5 py-0.5 rounded-full text-label-xs font-label-xs text-secondary">14</span>
+</button>
+<button class="filter-chip whitespace-nowrap h-8 px-space-md rounded-full bg-surface-container-lowest text-secondary font-label-sm text-label-sm shadow-sm transition-all flex items-center gap-1.5 hover:bg-surface-container-low" data-filter="in-progress" type="button">
+<span>In Progress</span>
+<span class="bg-surface-container px-1.5 py-0.5 rounded-full text-label-xs font-label-xs text-secondary">9</span>
+</button>
+<button class="filter-chip whitespace-nowrap h-8 px-space-md rounded-full bg-surface-container-lowest text-secondary font-label-sm text-label-sm shadow-sm transition-all flex items-center gap-1.5 hover:bg-surface-container-low" data-filter="completed" type="button">
+<span>Completed</span>
+<span class="bg-surface-container px-1.5 py-0.5 rounded-full text-label-xs font-label-xs text-secondary">105</span>
+</button>
+</div>
+</div>
+<!-- Ticket Cards List -->
+<div class="flex flex-col gap-space-sm" id="ticketsList">
+<!-- Ticket BS-1042 -->
+<article class="ticket-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm transition-all" data-status="in-progress">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">BS-1042</span>
+<div class="h-6 px-2.5 rounded-full bg-secondary-container flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-tint"></span>
+<span class="font-label-xs text-label-xs text-on-surface font-semibold uppercase tracking-wider">In Progress</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Rajesh Kulkarni</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">Samsung 43" LED TV</span>
+</div>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">calendar_today</span>
+<span>31 Oct 2026</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-2.5 rounded-lg bg-surface-container-low text-primary flex items-center gap-1 active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span class="font-label-sm text-label-sm">View</span>
+</button>
+<button aria-label="More options" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Ticket BS-1041 -->
+<article class="ticket-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm transition-all" data-status="pending">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">BS-1041</span>
+<div class="h-6 px-2.5 rounded-full bg-tertiary-fixed flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+<span class="font-label-xs text-label-xs text-on-tertiary-fixed font-semibold uppercase tracking-wider">Pending</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Sneha Patil</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">LG 7kg Washing Machine</span>
+</div>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">calendar_today</span>
+<span>30 Oct 2026</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-2.5 rounded-lg bg-surface-container-low text-primary flex items-center gap-1 active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span class="font-label-sm text-label-sm">View</span>
+</button>
+<button aria-label="More options" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Ticket BS-1040 -->
+<article class="ticket-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm transition-all" data-status="completed">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">BS-1040</span>
+<div class="h-6 px-2.5 rounded-full bg-surface-container-high flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="font-label-xs text-label-xs text-primary font-semibold uppercase tracking-wider">Completed</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Imran Shaikh</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">Voltas 1.5 Ton Split AC</span>
+</div>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">calendar_today</span>
+<span>29 Oct 2026</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-2.5 rounded-lg bg-surface-container-low text-primary flex items-center gap-1 active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span class="font-label-sm text-label-sm">View</span>
+</button>
+<button aria-label="More options" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Ticket BS-1039 -->
+<article class="ticket-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm transition-all" data-status="completed">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">BS-1039</span>
+<div class="h-6 px-2.5 rounded-full bg-surface-container-high flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="font-label-xs text-label-xs text-primary font-semibold uppercase tracking-wider">Completed</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Anita Deshmukh</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">Bajaj Mixer Grinder</span>
+</div>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">calendar_today</span>
+<span>28 Oct 2026</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-2.5 rounded-lg bg-surface-container-low text-primary flex items-center gap-1 active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span class="font-label-sm text-label-sm">View</span>
+</button>
+<button aria-label="More options" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Ticket BS-1038 -->
+<article class="ticket-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm transition-all" data-status="pending">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">BS-1038</span>
+<div class="h-6 px-2.5 rounded-full bg-tertiary-fixed flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
+<span class="font-label-xs text-label-xs text-on-tertiary-fixed font-semibold uppercase tracking-wider">Pending</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Vikram Joshi</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">Philips Steam Iron</span>
+</div>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">calendar_today</span>
+<span>28 Oct 2026</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-2.5 rounded-lg bg-surface-container-low text-primary flex items-center gap-1 active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span class="font-label-sm text-label-sm">View</span>
+</button>
+<button aria-label="More options" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Ticket BS-1037 -->
+<article class="ticket-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm transition-all" data-status="in-progress">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">BS-1037</span>
+<div class="h-6 px-2.5 rounded-full bg-secondary-container flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-surface-tint"></span>
+<span class="font-label-xs text-label-xs text-on-surface font-semibold uppercase tracking-wider">In Progress</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Pooja Kulkarni</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">Whirlpool Single-Door Fridge</span>
+</div>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">calendar_today</span>
+<span>27 Oct 2026</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-2.5 rounded-lg bg-surface-container-low text-primary flex items-center gap-1 active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span class="font-label-sm text-label-sm">View</span>
+</button>
+<button aria-label="More options" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Ticket BS-1036 -->
+<article class="ticket-card bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex flex-col gap-space-sm transition-all" data-status="completed">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface tracking-tight">BS-1036</span>
+<div class="h-6 px-2.5 rounded-full bg-surface-container-high flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+<span class="font-label-xs text-label-xs text-primary font-semibold uppercase tracking-wider">Completed</span>
+</div>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Amit Nair</span>
+<span class="font-body-sm text-body-sm text-secondary truncate">Sony Soundbar</span>
+</div>
+<div class="flex items-center justify-between pt-1 text-secondary">
+<div class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-outline">calendar_today</span>
+<span>26 Oct 2026</span>
+</div>
+<div class="flex items-center gap-space-xs">
+<button class="h-8 px-2.5 rounded-lg bg-surface-container-low text-primary flex items-center gap-1 active:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+<span class="font-label-sm text-label-sm">View</span>
+</button>
+<button aria-label="More options" class="w-8 h-8 rounded-lg flex items-center justify-center text-secondary hover:bg-surface-container-low transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+</article>
+</div>
+<!-- Pagination / Footer -->
+<div class="flex items-center justify-between pt-space-xs">
+<span class="font-body-sm text-body-sm text-secondary">Showing 1-7 of 128</span>
+<div class="flex items-center gap-space-xs">
+<button class="h-9 px-space-sm bg-surface-container-lowest text-outline rounded-lg shadow-sm flex items-center gap-1 opacity-50 cursor-not-allowed" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+<span class="font-label-sm text-label-sm">Prev</span>
+</button>
+<button class="h-9 px-space-sm bg-surface-container-lowest text-on-surface rounded-lg shadow-sm flex items-center gap-1 active:bg-surface-container transition-colors" type="button">
+<span class="font-label-sm text-label-sm">Next</span>
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const searchInput = document.getElementById('ticketSearch');
+    const filterButtons = document.querySelectorAll('.filter-chip');
+    const ticketCards = document.querySelectorAll('.ticket-card');
+    let currentFilter = 'all';
+
+    function applyFilterAndSearch() {
+      const query = (searchInput ? searchInput.value : '').toLowerCase().trim();
+      
+      ticketCards.forEach(card => {
+        const status = card.getAttribute('data-status');
+        const text = card.textContent.toLowerCase();
+        
+        const matchesFilter = (currentFilter === 'all') || (status === currentFilter);
+        const matchesQuery = query === '' || text.includes(query);
+
+        if (matchesFilter && matchesQuery) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    }
+
+    if (searchInput) {
+      searchInput.addEventListener('input', applyFilterAndSearch);
+    }
+
+    filterButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterButtons.forEach(b => {
+          b.classList.remove('bg-primary-container', 'text-on-primary');
+          b.classList.add('bg-surface-container-lowest', 'text-secondary');
+          const countBadge = b.querySelector('span:last-child');
+          if (countBadge) {
+            countBadge.classList.remove('bg-surface-container-lowest/20', 'text-on-primary');
+            countBadge.classList.add('bg-surface-container', 'text-secondary');
+          }
+        });
+
+        btn.classList.add('bg-primary-container', 'text-on-primary');
+        btn.classList.remove('bg-surface-container-lowest', 'text-secondary');
+        const activeBadge = btn.querySelector('span:last-child');
+        if (activeBadge) {
+          activeBadge.classList.add('bg-surface-container-lowest/20', 'text-on-primary');
+          activeBadge.classList.remove('bg-surface-container', 'text-secondary');
+        }
+
+        currentFilter = btn.getAttribute('data-filter') || 'all';
+        applyFilterAndSearch();
+      });
+    });
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.04)]" data-active-classes="text-primary font-semibold"><div class="flex items-center justify-around h-16 px-space-xs"><a class="flex flex-col items-center justify-center min-w-[64px] h-12 text-on-surface-variant transition-colors" data-path="dashboard" href="#"><span class="material-symbols-outlined text-[22px]">grid_view</span><span class="font-label-xs text-label-xs mt-0.5">Dashboard</span></a><a class="flex flex-col items-center justify-center min-w-[64px] h-12 text-on-surface-variant transition-colors" data-path="new-ticket" href="#"><div class="w-10 h-10 -mt-3 rounded-full bg-primary-container shadow-md flex items-center justify-center text-on-primary"><span class="material-symbols-outlined text-[22px]">mic</span></div><span class="font-label-xs text-label-xs mt-0.5 text-on-surface">New Slip</span></a><a aria-current="page" class="flex flex-col items-center justify-center min-w-[64px] h-12 transition-colors text-primary font-semibold" data-path="ticket-history" href="#"><span class="material-symbols-outlined text-[22px]">history</span><span class="font-label-xs text-label-xs mt-0.5">History</span></a><a class="flex flex-col items-center justify-center min-w-[64px] h-12 text-on-surface-variant transition-colors" data-path="settings" href="#"><span class="material-symbols-outlined text-[22px]">settings</span><span class="font-label-xs text-label-xs mt-0.5">Settings</span></a></div></nav></body></html>

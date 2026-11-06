@@ -4,26 +4,45 @@ import { Link } from 'react-router-dom';
 import VoiceRecorder from '../components/VoiceRecorder';
 import TicketForm from '../components/TicketForm';
 import AudioPlayer from '../components/AudioPlayer';
-import { confirmTicket } from '../api/client';
-import type { Ticket, TranscribeResult } from '../types/ticket';
+import { confirmTicket, extractTranscript } from '../api/client';
+import type { ExtractionResult, Ticket, TranscribeResult } from '../types/ticket';
 
 export default function HomePage() {
   const [transcript, setTranscript] = useState('');
+  const [extraction, setExtraction] = useState<ExtractionResult | null>(null);
+  const [extracting, setExtracting] = useState(false);
+  const [extractError, setExtractError] = useState<string | null>(null);
+
   const [createdTicket, setCreatedTicket] = useState<Ticket | null>(null);
   const [confirmAudioUrl, setConfirmAudioUrl] = useState<string | null>(null);
   const [playingConfirm, setPlayingConfirm] = useState(false);
   const [confirmError, setConfirmError] = useState<string | null>(null);
 
-  function handleTranscript(text: string, _raw: TranscribeResult) {
+  async function handleTranscript(text: string, _raw: TranscribeResult) {
     setTranscript(text);
     // Clear previous confirmation if any
     setCreatedTicket(null);
     setConfirmAudioUrl(null);
+    setExtractError(null);
+
+    // Call extraction API automatically
+    setExtracting(true);
+    try {
+      const result = await extractTranscript(text);
+      setExtraction(result);
+    } catch (err) {
+      console.error('Failed to extract transcript fields:', err);
+      setExtractError('फ़ील्ड्स स्वतः निकालने में समस्या आई। आप मैन्युअल भर सकते हैं।');
+      setExtraction(null);
+    } finally {
+      setExtracting(false);
+    }
   }
 
   async function handleTicketCreated(ticket: Ticket) {
     setCreatedTicket(ticket);
     setTranscript('');
+    setExtraction(null);
     setConfirmError(null);
 
     // Auto-fetch spoken confirmation from Timbre TTS
@@ -88,7 +107,13 @@ export default function HomePage() {
             <Link to={`/tickets/${createdTicket.id}`}>
               <button className="btn-primary">विवरण देखें (Ticket Details) →</button>
             </Link>
-            <button className="btn-secondary" onClick={() => setCreatedTicket(null)}>
+            <button
+              className="btn-secondary"
+              onClick={() => {
+                setCreatedTicket(null);
+                setConfirmAudioUrl(null);
+              }}
+            >
               + नई पर्ची बनाएं
             </button>
           </div>
@@ -98,8 +123,47 @@ export default function HomePage() {
       {/* Step 1: Voice Recording */}
       <VoiceRecorder onTranscript={handleTranscript} />
 
+      {/* Extraction loading status indicator */}
+      {extracting && (
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '.75rem',
+            margin: '1rem 0',
+            background: '#eff6ff',
+            border: '1px solid #bfdbfe',
+            borderRadius: 'var(--radius)',
+            color: 'var(--color-primary)',
+            fontWeight: 500,
+          }}
+        >
+          ⚡ आवाज़ से पर्ची के विवरण (डिवाइस, समस्या, तारीख, लागत) पहचाने जा रहे हैं...
+        </div>
+      )}
+
+      {extractError && (
+        <div
+          style={{
+            textAlign: 'center',
+            padding: '.6rem',
+            margin: '1rem 0',
+            background: '#fffbeb',
+            border: '1px solid #fde68a',
+            borderRadius: 'var(--radius)',
+            color: '#92400e',
+            fontSize: '.9rem',
+          }}
+        >
+          {extractError}
+        </div>
+      )}
+
       {/* Step 2: Form */}
-      <TicketForm initialTranscript={transcript} onTicketCreated={handleTicketCreated} />
+      <TicketForm
+        initialTranscript={transcript}
+        extractedFields={extraction}
+        onTicketCreated={handleTicketCreated}
+      />
     </div>
   );
 }

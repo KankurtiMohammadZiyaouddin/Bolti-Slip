@@ -82,3 +82,33 @@ class TranscribeResponse(BaseModel):
 class HealthResponse(BaseModel):
     status: str
     version: str
+
+
+# ---------------------------------------------------------------------------
+# Extraction schemas
+# ---------------------------------------------------------------------------
+
+class ExtractRequest(BaseModel):
+    """Body expected by POST /api/extract."""
+    transcript: str = Field(..., min_length=1, max_length=4000)
+
+
+class ExtractedFields(BaseModel):
+    """Structured ticket fields extracted from a transcript."""
+    customer_name:       Optional[str]   = None
+    customer_phone:      Optional[str]   = None
+    device_description:  Optional[str]   = None
+    reported_problem:    Optional[str]   = None
+    repair_instructions: Optional[str]   = None
+    expected_delivery:   Optional[str]   = None
+    estimated_cost:      Optional[float] = None
+    transcript_raw:      Optional[str]   = None
+
+
+class ExtractResponse(BaseModel):
+    """Shape returned by POST /api/extract."""
+    success:            bool
+    fields:             ExtractedFields
+    missing_fields:     list[str]
+    needs_confirmation: list[str]
+    unresolved_phrases: list[str]

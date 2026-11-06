@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from backend.database.db import init_db
 from backend.models.ticket import HealthResponse
-from backend.routers import transcription, tickets, speech
+from backend.routers import transcription, tickets, speech, extraction
 
 
 # ---------------------------------------------------------------------------
@@ -58,6 +58,7 @@ app.add_middleware(
 app.include_router(transcription.router)
 app.include_router(tickets.router)
 app.include_router(speech.router)
+app.include_router(extraction.router)
 
 
 # ---------------------------------------------------------------------------
