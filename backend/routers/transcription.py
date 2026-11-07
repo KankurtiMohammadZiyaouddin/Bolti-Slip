@@ -38,7 +38,17 @@ async def transcribe_audio(audio_file: UploadFile = File(...)):
     Returns a JSON body with the transcript and metadata.
     """
     # Save upload to a named temp file so PrismaService can open it by path.
-    suffix = Path(audio_file.filename or "audio.wav").suffix or ".wav"
+    filename = audio_file.filename or ""
+    suffix = Path(filename).suffix
+    if not suffix:
+        if audio_file.content_type and "webm" in audio_file.content_type:
+            suffix = ".webm"
+        elif audio_file.content_type and "ogg" in audio_file.content_type:
+            suffix = ".ogg"
+        elif audio_file.content_type and ("mp4" in audio_file.content_type or "m4a" in audio_file.content_type):
+            suffix = ".m4a"
+        else:
+            suffix = ".wav"
 
     with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as tmp:
         tmp_path = Path(tmp.name)

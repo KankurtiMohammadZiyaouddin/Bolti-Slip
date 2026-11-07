@@ -18,12 +18,14 @@ export default function VoiceRecorder({ onTranscript }: Props) {
     state,
     audioBlob,
     audioUrl,
+    recordedMimeType,
     formattedDuration,
     startRecording,
     stopRecording,
     setUploadedFile,
     reset,
     error,
+    errorInfo,
   } = useVoiceRecorder();
 
   const [transcribing, setTranscribing] = useState(false);
@@ -31,20 +33,41 @@ export default function VoiceRecorder({ onTranscript }: Props) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   async function handleTranscribe() {
-    if (!audioBlob) return;
+    if (!audioBlob || transcribing) return;
     setTranscribing(true);
     setTranscribeError(null);
+
+    // Determine correct filename and extension dynamically based on actual MIME type
+    let filename = 'recording.webm';
+    if (audioBlob instanceof File && audioBlob.name) {
+      filename = audioBlob.name;
+    } else {
+      const type = (recordedMimeType || audioBlob.type || '').toLowerCase();
+      if (type.includes('webm')) filename = 'recording.webm';
+      else if (type.includes('mp4') || type.includes('m4a') || type.includes('aac')) filename = 'recording.m4a';
+      else if (type.includes('ogg')) filename = 'recording.ogg';
+      else if (type.includes('wav')) filename = 'recording.wav';
+      else filename = 'recording.webm';
+    }
+
     try {
-      const filename = audioBlob instanceof File ? audioBlob.name : 'recording.webm';
       const result = await transcribeAudio(audioBlob, filename);
       if (result.success && result.transcript) {
         onTranscript(result.transcript, result);
         reset();
       } else {
-        setTranscribeError(result.error ?? 'ट्रांसक्रिप्शन विफल हुआ। Gnani Prisma API एरर।');
+        const errDetail = result.error || 'ट्रांसक्रिप्शन विफल हुआ। Gnani Prisma API एरर।';
+        setTranscribeError(errDetail);
       }
-    } catch (e) {
-      setTranscribeError(e instanceof Error ? e.message : 'सर्वर या नेटवर्क त्रुटि।');
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'सर्वर या नेटवर्क त्रुटि।';
+      if (msg.includes('Failed to fetch') || msg.includes('NetworkError') || msg.includes('Load failed')) {
+        setTranscribeError(
+          'नेटवर्क या टनल कनेक्शन त्रुटि (Failed to fetch). कृपया इंटरनेट और टनल कनेक्शन जांचें। आपका ऑडियो सुरक्षित है, कृपया "पुनः प्रयास करें" दबाएं।'
+        );
+      } else {
+        setTranscribeError(msg);
+      }
     } finally {
       setTranscribing(false);
     }
@@ -59,11 +82,37 @@ export default function VoiceRecorder({ onTranscript }: Props) {
 
   return (
     <div className="flex flex-col gap-4">
-      {error && (
+      {errorInfo ? (
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900 text-left flex flex-col gap-2 shadow-xs">
+          <div className="flex items-center gap-2 text-amber-800 font-semibold font-label-md">
+            <span className="material-symbols-outlined text-[20px] text-amber-700">mic_off</span>
+            <span>{errorInfo.title}</span>
+          </div>
+          <p className="font-body-sm text-body-sm whitespace-pre-line text-amber-800">
+            {errorInfo.instruction}
+          </p>
+          <div className="flex items-center gap-2 pt-2 border-t border-amber-200/60 mt-1">
+            <button
+              type="button"
+              onClick={startRecording}
+              className="px-3.5 py-1.5 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-label-sm font-medium transition-colors cursor-pointer"
+            >
+              🔄 पुनः प्रयास करें (Retry)
+            </button>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="px-3.5 py-1.5 rounded-lg bg-white border border-amber-300 text-amber-900 font-label-sm font-medium hover:bg-amber-100 transition-colors cursor-pointer"
+            >
+              📁 ऑडियो फ़ाइल अपलोड करें
+            </button>
+          </div>
+        </div>
+      ) : error ? (
         <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-error font-body-sm text-body-sm">
           {error}
         </div>
-      )}
+      ) : null}
 
       {/* STATE 1: IDLE — Ready to record or upload */}
       {state === 'idle' && (
@@ -186,8 +235,8 @@ export default function VoiceRecorder({ onTranscript }: Props) {
               disabled={transcribing}
               className="flex-1 bg-primary-container hover:bg-primary text-on-primary py-3 px-5 rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 shadow-sm transition-all active:scale-[0.99] cursor-pointer disabled:opacity-50"
             >
-              <span className="material-symbols-outlined text-[20px]">
-                {transcribing ? 'sync' : 'transcribe'}
+              <span className={`material-symbols-outlined text-[20px] ${transcribing ? 'animate-spin' : ''}`}>
+                {transcribing ? 'progress_activity' : 'transcribe'}
               </span>
               <span>{transcribing ? 'Prisma STT द्वारा टेक्स्ट बन रहा है…' : '✔ ट्रांसक्राइब करें (Transcribe Speech)'}</span>
             </button>
@@ -196,7 +245,7 @@ export default function VoiceRecorder({ onTranscript }: Props) {
               type="button"
               onClick={reset}
               disabled={transcribing}
-              className="border border-outline-variant hover:bg-surface-container-low text-secondary px-4 py-3 rounded-xl font-label-md text-label-md transition-colors cursor-pointer"
+              className="border border-outline-variant hover:bg-surface-container-low text-secondary px-4 py-3 rounded-xl font-label-md text-label-md transition-colors cursor-pointer disabled:opacity-40"
             >
               ↺ Reset
             </button>
@@ -208,14 +257,28 @@ export default function VoiceRecorder({ onTranscript }: Props) {
       <input
         ref={fileInputRef}
         type="file"
-        accept="audio/*,.wav,.mp3,.m4a,.webm,.ogg"
+        accept="audio/*,.wav,.mp3,.m4a,.webm,.ogg,.aac,.flac"
         onChange={handleFileChange}
         className="hidden"
       />
 
       {transcribeError && (
-        <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-error font-body-sm text-body-sm">
-          {transcribeError}
+        <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-error font-body-sm flex flex-col gap-2.5">
+          <div className="flex items-start gap-2">
+            <span className="material-symbols-outlined text-[20px] text-error shrink-0 mt-0.5">error</span>
+            <span className="flex-1 font-medium">{transcribeError}</span>
+          </div>
+          <div className="flex items-center gap-2 pt-1 border-t border-red-200/60">
+            <button
+              type="button"
+              onClick={handleTranscribe}
+              disabled={transcribing}
+              className="px-3.5 py-1.5 bg-error text-white rounded-lg font-label-sm font-semibold hover:bg-red-700 transition-colors cursor-pointer disabled:opacity-50 flex items-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-[16px]">refresh</span>
+              <span>पुनः प्रयास करें (Retry Transcription)</span>
+            </button>
+          </div>
         </div>
       )}
     </div>

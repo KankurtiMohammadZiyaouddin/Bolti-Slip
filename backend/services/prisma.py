@@ -21,6 +21,8 @@ from typing import Any
 import requests
 from dotenv import load_dotenv
 
+from backend.services.audio_converter import ensure_prisma_compatible_audio
+
 # ---------------------------------------------------------------------------
 # Constants — verified against the working test_prisma.py integration test
 # ---------------------------------------------------------------------------
@@ -38,7 +40,6 @@ _AUDIO_MIME_TYPES: dict[str, str] = {
     ".mp4":  "audio/mp4",
     ".ogg":  "audio/ogg",
     ".flac": "audio/flac",
-    ".webm": "audio/webm",
     ".aac":  "audio/aac",
 }
 
@@ -156,8 +157,6 @@ class PrismaService:
                 error_type="INVALID_PATH",
             )
 
-        mime_type = _AUDIO_MIME_TYPES.get(audio_path.suffix.lower(), "audio/wav")
-
         # --- Build request -----------------------------------------------
         headers = {"X-API-Key-ID": self._api_key}
         form_data = {
@@ -166,17 +165,19 @@ class PrismaService:
             "format":        _FORMAT,
         }
 
-        # --- Send request ------------------------------------------------
+        # --- Send request (transparently converts WebM/Opus to WAV if needed) --
         start = time.monotonic()
         try:
-            with audio_path.open("rb") as audio_file:
-                response = requests.post(
-                    self._endpoint,
-                    headers=headers,
-                    data=form_data,
-                    files={"audio_file": (audio_path.name, audio_file, mime_type)},
-                    timeout=self._timeout,
-                )
+            with ensure_prisma_compatible_audio(audio_path) as ready_path:
+                mime_type = _AUDIO_MIME_TYPES.get(ready_path.suffix.lower(), "audio/wav")
+                with ready_path.open("rb") as audio_file:
+                    response = requests.post(
+                        self._endpoint,
+                        headers=headers,
+                        data=form_data,
+                        files={"audio_file": (ready_path.name, audio_file, mime_type)},
+                        timeout=self._timeout,
+                    )
             elapsed = round(time.monotonic() - start, 3)
 
         except requests.exceptions.ConnectionError:
@@ -201,6 +202,14 @@ class PrismaService:
                 result,
                 error=f"Unexpected request error: {exc}",
                 error_type="REQUEST_ERROR",
+            )
+
+        except Exception as exc:
+            result["request_elapsed_seconds"] = round(time.monotonic() - start, 3)
+            return self._fail(
+                result,
+                error=f"Audio processing error: {exc}",
+                error_type="AUDIO_PROCESSING_ERROR",
             )
 
         # Record client-side elapsed time and HTTP status immediately.
