@@ -1,25 +1,31 @@
-# Secrets — never commit these
-.env
-backend/.env
-
-# Virtual environment
-.venv/
-
-# Python cache
+# Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
 
-# Database
-bolti_slip.db
+# Environment secrets
+.env
+.env.*
+!.env.example
 
-# Uploaded temp audio
-backend/uploads/
+# Database and customer data
+*.db
+*.sqlite
+*.sqlite3
 
-# Frontend build output
-frontend/dist/
-frontend/node_modules/
+# Frontend dependencies and builds
+node_modules/
+dist/
+coverage/
 
-# OS
-.DS_Store
-Thumbs.db
+# Logs
+*.log
+uvicorn_err.log
+uvicorn_out.log
+
+# Local audio recordings and test outputs
+originals_m4a/
+test_*.wav
+test_audio.*
