@@ -10,20 +10,33 @@ export default function MobileBottomNav() {
           to="/"
           end
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center min-w-[64px] h-12 transition-colors ${
+            `flex flex-col items-center justify-center min-w-[56px] h-12 transition-colors ${
               isActive ? 'text-primary font-semibold' : 'text-secondary'
             }`
           }
         >
-          <span className="material-symbols-outlined text-[22px]">grid_view</span>
-          <span className="font-label-xs text-[11px] mt-0.5">Dashboard</span>
+          <span className="material-symbols-outlined text-[20px]">grid_view</span>
+          <span className="font-label-xs text-[10px] mt-0.5">Dashboard</span>
+        </NavLink>
+
+        {/* Customers */}
+        <NavLink
+          to="/customers"
+          className={({ isActive }) =>
+            `flex flex-col items-center justify-center min-w-[56px] h-12 transition-colors ${
+              isActive ? 'text-primary font-semibold' : 'text-secondary'
+            }`
+          }
+        >
+          <span className="material-symbols-outlined text-[20px]">group</span>
+          <span className="font-label-xs text-[10px] mt-0.5">Customers</span>
         </NavLink>
 
         {/* New Ticket (Elevated Mic CTA) */}
         <NavLink
           to="/new-ticket"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center min-w-[64px] h-12 transition-colors ${
+            `flex flex-col items-center justify-center min-w-[56px] h-12 transition-colors ${
               isActive ? 'text-primary font-semibold' : 'text-secondary'
             }`
           }
@@ -31,33 +44,33 @@ export default function MobileBottomNav() {
           <div className="w-10 h-10 -mt-3 rounded-full bg-primary-container shadow-md flex items-center justify-center text-on-primary">
             <span className="material-symbols-outlined text-[22px]">mic</span>
           </div>
-          <span className="font-label-xs text-[11px] mt-0.5 text-on-surface font-medium">New Slip</span>
+          <span className="font-label-xs text-[10px] mt-0.5 text-on-surface font-medium">New Slip</span>
         </NavLink>
 
         {/* Ticket History */}
         <NavLink
           to="/tickets"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center min-w-[64px] h-12 transition-colors ${
+            `flex flex-col items-center justify-center min-w-[56px] h-12 transition-colors ${
               isActive ? 'text-primary font-semibold' : 'text-secondary'
             }`
           }
         >
-          <span className="material-symbols-outlined text-[22px]">history</span>
-          <span className="font-label-xs text-[11px] mt-0.5">History</span>
+          <span className="material-symbols-outlined text-[20px]">history</span>
+          <span className="font-label-xs text-[10px] mt-0.5">History</span>
         </NavLink>
 
         {/* Settings */}
         <NavLink
           to="/settings"
           className={({ isActive }) =>
-            `flex flex-col items-center justify-center min-w-[64px] h-12 transition-colors ${
+            `flex flex-col items-center justify-center min-w-[56px] h-12 transition-colors ${
               isActive ? 'text-primary font-semibold' : 'text-secondary'
             }`
           }
         >
-          <span className="material-symbols-outlined text-[22px]">settings</span>
-          <span className="font-label-xs text-[11px] mt-0.5">Settings</span>
+          <span className="material-symbols-outlined text-[20px]">settings</span>
+          <span className="font-label-xs text-[10px] mt-0.5">Settings</span>
         </NavLink>
       </div>
     </nav>

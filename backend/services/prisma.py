@@ -79,7 +79,7 @@ class PrismaService:
     ----------
     env_path : Path | str | None
         Path to the .env file that holds GNANI_API_KEY_ID.
-        Defaults to the project root .env (two levels up from services/).
+        Defaults to the project root .env and backend/.env.
     timeout : int
         Request timeout in seconds. Defaults to 60.
 
@@ -94,9 +94,13 @@ class PrismaService:
         env_path: "Path | str | None" = None,
         timeout: int = _TIMEOUT_SECONDS,
     ) -> None:
-        if env_path is None:
-            env_path = Path(__file__).parent.parent / ".env"
-        load_dotenv(dotenv_path=Path(env_path))
+        if env_path is not None:
+            load_dotenv(dotenv_path=Path(env_path), override=False)
+        else:
+            project_root = Path(__file__).resolve().parent.parent.parent
+            # Load root .env first, then backend/.env without overriding existing deployment env vars
+            load_dotenv(dotenv_path=project_root / ".env", override=False)
+            load_dotenv(dotenv_path=project_root / "backend" / ".env", override=False)
 
         api_key = os.getenv("GNANI_API_KEY_ID")
         if not api_key:

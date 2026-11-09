@@ -1,14 +1,68 @@
 // src/pages/Settings/SettingsPage.tsx
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { changePassword } from '../../api/client';
 
 export default function SettingsPage() {
-  const [shopName, setShopName] = useState('Sharma Electronics');
-  const [branchName, setBranchName] = useState('Pune Branch');
-  const [shopAddress, setShopAddress] = useState('Shop #4, Laxmi Road, Pune - 411030');
-  const [shopPhone, setShopPhone] = useState('9822012345');
+  const { shop } = useAuth();
+  const [shopName, setShopName] = useState(shop?.shop_name || 'Sharma Electronics');
+  const [branchName, setBranchName] = useState(shop?.branch || 'Pune Branch');
+  const [shopAddress, setShopAddress] = useState(shop?.address || 'Shop #4, Laxmi Road, Pune - 411030');
+  const [shopPhone, setShopPhone] = useState(shop?.phone || '9822012345');
   const [sttModel] = useState('Gnani Prisma v3.0 (Indic-ASR)');
   const [ttsVoice, setTtsVoice] = useState('Devansh');
   const [saved, setSaved] = useState(false);
+
+  // Password change state
+  const [currentPwd, setCurrentPwd] = useState('');
+  const [newPwd, setNewPwd] = useState('');
+  const [confirmPwd, setConfirmPwd] = useState('');
+  const [pwdError, setPwdError] = useState<string | null>(null);
+  const [pwdSuccess, setPwdSuccess] = useState<string | null>(null);
+  const [isChangingPwd, setIsChangingPwd] = useState(false);
+
+  useEffect(() => {
+    if (shop) {
+      if (shop.shop_name) setShopName(shop.shop_name);
+      if (shop.branch) setBranchName(shop.branch);
+      if (shop.address) setShopAddress(shop.address);
+      if (shop.phone) setShopPhone(shop.phone);
+    }
+  }, [shop]);
+
+  async function handlePasswordChange(e: React.FormEvent) {
+    e.preventDefault();
+    setPwdError(null);
+    setPwdSuccess(null);
+
+    if (!currentPwd.trim() || !newPwd.trim()) {
+      setPwdError('कृपया वर्तमान और नया पासवर्ड दोनों दर्ज करें।');
+      return;
+    }
+
+    if (newPwd.length < 6) {
+      setPwdError('नया पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।');
+      return;
+    }
+
+    if (newPwd !== confirmPwd) {
+      setPwdError('नया पासवर्ड और पुष्टि पासवर्ड मेल नहीं खाते।');
+      return;
+    }
+
+    setIsChangingPwd(true);
+    try {
+      const res = await changePassword(currentPwd, newPwd);
+      setPwdSuccess(res.message || 'पासवर्ड सफलतापूर्वक बदल दिया गया। (Password changed successfully)');
+      setCurrentPwd('');
+      setNewPwd('');
+      setConfirmPwd('');
+    } catch (err: any) {
+      setPwdError(err.message || 'पासवर्ड बदलने में त्रुटि। वर्तमान पासवर्ड जांचें।');
+    } finally {
+      setIsChangingPwd(false);
+    }
+  }
 
   function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -181,6 +235,93 @@ export default function SettingsPage() {
           </section>
         </div>
       </form>
+
+      {/* Security & Password Change Section */}
+      <section className="mt-8 bg-surface-container-lowest rounded-2xl border border-outline-variant shadow-sm p-6 max-w-2xl">
+        <div className="flex items-center gap-space-sm pb-4 mb-4 border-b border-outline-variant/60">
+          <div className="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-primary">
+            <span className="material-symbols-outlined text-[20px]">lock_reset</span>
+          </div>
+          <div>
+            <h2 className="font-headline-sm text-headline-sm text-on-surface font-semibold">
+              सुरक्षा और पासवर्ड सेटअप (Security &amp; Password)
+            </h2>
+            <p className="font-label-xs text-label-xs text-secondary">
+              अपनी दुकान के अकाउंट का पासवर्ड सुरक्षित रूप से बदलें
+            </p>
+          </div>
+        </div>
+
+        {pwdSuccess && (
+          <div className="p-3.5 mb-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">check_circle</span>
+            <span>{pwdSuccess}</span>
+          </div>
+        )}
+
+        {pwdError && (
+          <div className="p-3.5 mb-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
+            <span className="material-symbols-outlined text-[18px]">error</span>
+            <span>{pwdError}</span>
+          </div>
+        )}
+
+        <form onSubmit={handlePasswordChange} className="space-y-4">
+          <div>
+            <label className="block font-label-sm text-label-sm text-on-surface font-semibold mb-1">
+              वर्तमान पासवर्ड (Current Password) *
+            </label>
+            <input
+              type="password"
+              required
+              value={currentPwd}
+              onChange={(e) => setCurrentPwd(e.target.value)}
+              placeholder="••••••••"
+              className="w-full h-10 px-3 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface border border-outline-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface font-semibold mb-1">
+                नया पासवर्ड (New Password) *
+              </label>
+              <input
+                type="password"
+                required
+                value={newPwd}
+                onChange={(e) => setNewPwd(e.target.value)}
+                placeholder="कम से कम 6 अक्षर"
+                className="w-full h-10 px-3 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface border border-outline-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container"
+              />
+            </div>
+
+            <div>
+              <label className="block font-label-sm text-label-sm text-on-surface font-semibold mb-1">
+                नया पासवर्ड दोहराएं (Confirm Password) *
+              </label>
+              <input
+                type="password"
+                required
+                value={confirmPwd}
+                onChange={(e) => setConfirmPwd(e.target.value)}
+                placeholder="••••••••"
+                className="w-full h-10 px-3 bg-surface-container-lowest rounded-lg font-body-md text-body-md text-on-surface border border-outline-variant focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container"
+              />
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={isChangingPwd}
+              className="py-2.5 px-5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-label-md text-label-md shadow-sm transition-all cursor-pointer font-semibold disabled:opacity-60"
+            >
+              {isChangingPwd ? 'बदला जा रहा है...' : 'पासवर्ड अपडेट करें (Update Password)'}
+            </button>
+          </div>
+        </form>
+      </section>
     </div>
   );
 }

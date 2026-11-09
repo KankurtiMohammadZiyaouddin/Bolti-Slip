@@ -19,6 +19,7 @@ from fastapi.responses import Response
 
 from backend.database.db import get_db
 from backend.models.ticket import SpeakRequest
+from backend.services.auth import get_current_shop
 from backend.services.timbre import TimbreService
 
 router = APIRouter(prefix="/api", tags=["speech"])
@@ -31,7 +32,10 @@ _DEFAULT_LANGUAGE = "hi-IN"
 
 
 @router.post("/speak")
-async def speak(body: SpeakRequest):
+async def speak(
+    body: SpeakRequest,
+    current_shop: dict = Depends(get_current_shop),
+):
     """
     Synthesise text to WAV audio using Gnani Timbre v3.0.
 
@@ -58,6 +62,7 @@ async def speak(body: SpeakRequest):
 @router.post("/tickets/{ticket_id}/confirm")
 async def confirm_ticket(
     ticket_id: int,
+    current_shop: dict = Depends(get_current_shop),
     db: aiosqlite.Connection = Depends(get_db),
 ):
     """
@@ -66,7 +71,7 @@ async def confirm_ticket(
     Reads the ticket from the database, constructs a confirmation sentence,
     synthesises it with Timbre v3.0 (voice=Devansh), and streams the WAV.
     """
-    cursor = await db.execute("SELECT * FROM tickets WHERE id = ?", (ticket_id,))
+    cursor = await db.execute("SELECT * FROM tickets WHERE id = ? AND shop_id = ?", (ticket_id, current_shop["id"]))
     row = await cursor.fetchone()
     if row is None:
         raise HTTPException(status_code=404, detail=f"Ticket {ticket_id} not found.")

@@ -14,6 +14,7 @@ venv/
 *.db
 *.sqlite
 *.sqlite3
+backups/
 
 # Frontend dependencies and builds
 node_modules/
@@ -29,3 +30,5 @@ uvicorn_out.log
 originals_m4a/
 test_*.wav
 test_audio.*
+# TypeScript build cache
+frontend/tsconfig.tsbuildinfo

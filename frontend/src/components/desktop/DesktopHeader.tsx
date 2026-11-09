@@ -6,6 +6,7 @@ const TITLE_MAP: Record<string, string> = {
   '/dashboard': 'Dashboard',
   '/new-ticket': 'New Ticket',
   '/tickets': 'Ticket History',
+  '/customers': 'Customers Directory',
   '/settings': 'Settings',
 };
 

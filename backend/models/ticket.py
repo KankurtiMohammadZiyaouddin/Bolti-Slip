@@ -62,6 +62,8 @@ class TicketResponse(BaseModel):
     status:              TicketStatus
     created_at:          str
     updated_at:          str
+    shop_id:             Optional[int] = None
+    customer_id:         Optional[int] = None
 
     model_config = {"from_attributes": True}
 

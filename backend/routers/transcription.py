@@ -13,9 +13,10 @@ import shutil
 import tempfile
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
 
+from backend.services.auth import get_current_shop
 from backend.services.prisma import PrismaService
 from backend.models.ticket import TranscribeResponse
 
@@ -28,7 +29,10 @@ _prisma = PrismaService()
 
 
 @router.post("/transcribe", response_model=TranscribeResponse)
-async def transcribe_audio(audio_file: UploadFile = File(...)):
+async def transcribe_audio(
+    audio_file: UploadFile = File(...),
+    current_shop: dict = Depends(get_current_shop),
+):
     """
     Transcribe an uploaded audio file using Gnani Prisma v3.0.
 

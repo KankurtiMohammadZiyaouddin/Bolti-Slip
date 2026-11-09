@@ -1,5 +1,6 @@
 // src/components/desktop/DesktopSidebar.tsx
 import { NavLink } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 interface NavItem {
   name: string;
@@ -10,11 +11,23 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { name: 'Dashboard', path: '/', icon: 'dashboard' },
   { name: 'New Ticket', path: '/new-ticket', icon: 'mic' },
+  { name: 'Customers', path: '/customers', icon: 'group' },
   { name: 'Ticket History', path: '/tickets', icon: 'history' },
   { name: 'Settings', path: '/settings', icon: 'settings' },
 ];
 
 export default function DesktopSidebar() {
+  const { shop, logout } = useAuth();
+
+  const shopInitials = shop?.shop_name
+    ? shop.shop_name
+        .split(' ')
+        .map((w) => w[0])
+        .join('')
+        .slice(0, 2)
+        .toUpperCase()
+    : 'BS';
+
   return (
     <aside className="fixed left-0 top-0 h-full w-[248px] bg-surface-container-lowest border-r border-outline-variant z-50 flex flex-col justify-between">
       <div className="flex flex-col">
@@ -50,21 +63,31 @@ export default function DesktopSidebar() {
         </nav>
       </div>
 
-      {/* Shop Profile Snippet */}
-      <div className="p-space-md border-t border-outline-variant">
-        <div className="flex items-center gap-space-sm p-space-xs rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">
+      {/* Shop Profile & Logout */}
+      <div className="p-space-md border-t border-outline-variant flex flex-col gap-2">
+        <div className="flex items-center gap-space-sm p-space-xs rounded-lg hover:bg-surface-container-low transition-colors">
           <div className="w-8 h-8 rounded-full bg-secondary-container text-secondary flex items-center justify-center font-label-md text-label-md font-semibold shrink-0">
-            SE
+            {shopInitials}
           </div>
           <div className="flex flex-col min-w-0 flex-1">
             <span className="font-label-md text-label-md text-on-surface truncate font-medium">
-              Sharma Electronics
+              {shop?.shop_name || 'Sharma Electronics'}
             </span>
             <span className="font-label-xs text-label-xs text-secondary truncate">
-              Pune Branch
+              {shop?.branch || 'Pune Branch'}
             </span>
           </div>
         </div>
+
+        {/* Logout Button */}
+        <button
+          type="button"
+          onClick={() => logout()}
+          className="flex w-full items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 hover:bg-red-50 transition-colors"
+        >
+          <span className="material-symbols-outlined text-[16px]">logout</span>
+          <span>लॉगआउट (Logout)</span>
+        </button>
       </div>
     </aside>
   );

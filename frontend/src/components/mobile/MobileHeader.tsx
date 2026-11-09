@@ -1,6 +1,11 @@
 // src/components/mobile/MobileHeader.tsx
+import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 export default function MobileHeader() {
+  const { shop, logout } = useAuth();
+  const [showMenu, setShowMenu] = useState(false);
+
   return (
     <header className="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl border-b border-outline-variant/60 pt-safe">
       <div className="h-16 px-space-md flex items-center justify-between">
@@ -13,22 +18,40 @@ export default function MobileHeader() {
               Bolti Slip
             </span>
             <span className="font-label-xs text-label-xs text-secondary font-medium">
-              Sharma Electronics
+              {shop?.shop_name || 'Sharma Electronics'}
             </span>
           </div>
         </div>
 
-        <div className="flex items-center gap-space-xs">
+        <div className="relative flex items-center gap-space-xs">
           <button
             type="button"
-            aria-label="Notifications"
-            className="w-10 h-10 flex items-center justify-center rounded-full text-secondary hover:text-on-surface transition-colors cursor-pointer"
+            aria-label="Profile Menu"
+            onClick={() => setShowMenu((prev) => !prev)}
+            className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shrink-0"
           >
-            <span className="material-symbols-outlined text-[22px]">notifications</span>
-          </button>
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary shrink-0">
             <span className="material-symbols-outlined text-[18px]">person</span>
-          </div>
+          </button>
+
+          {showMenu && (
+            <div className="absolute right-0 top-11 w-48 rounded-xl border border-gray-100 bg-white p-2 shadow-xl">
+              <div className="border-b border-gray-100 px-3 py-2">
+                <p className="text-xs font-semibold text-gray-900 truncate">{shop?.owner_name}</p>
+                <p className="text-[11px] text-gray-500 truncate">{shop?.branch || 'Main Branch'}</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowMenu(false);
+                  logout();
+                }}
+                className="flex w-full items-center gap-2 px-3 py-2 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors mt-1"
+              >
+                <span className="material-symbols-outlined text-[16px]">logout</span>
+                <span>लॉगआउट (Logout)</span>
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </header>

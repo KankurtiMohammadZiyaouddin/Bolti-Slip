@@ -17,7 +17,12 @@ export interface Ticket {
   status: TicketStatus;
   created_at: string;
   updated_at: string;
+  shop_id?: number | null;
+  customer_id?: number | null;
 }
+
+export * from './auth';
+export * from './customer';
 
 export interface TranscribeResult {
   success: boolean;
