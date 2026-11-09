@@ -32,6 +32,15 @@ DEFAULT_DEV_ORIGINS = [
 ALLOWED_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 ALLOWED_HEADERS = ["Authorization", "Content-Type", "Accept", "X-Requested-With"]
 
+# Narrowly scoped regex pattern for project-specific Vercel preview/branch deployments
+# Matches:
+#   https://bolti-slip-git-main-kankurtimohammadziyaouddins-projects.vercel.app
+#   https://bolti-slip-i2ix660fz-kankurtimohammadziyaouddins-projects.vercel.app
+#   https://bolti-slip-kankurtimohammadziyaouddins-projects.vercel.app
+DEFAULT_VERCEL_PREVIEW_REGEX = (
+    r"^https:\/\/bolti-slip(?:-[a-zA-Z0-9]+)*-kankurtimohammadziyaouddins-projects\.vercel\.app$"
+)
+
 
 def is_production_mode() -> bool:
     """Check if application is running in production mode via environment variable."""
@@ -84,7 +93,7 @@ def parse_cors_origins(raw_origins: str | None, is_production: bool) -> List[str
 
     if raw_origins:
         for entry in raw_origins.split(","):
-            cleaned = entry.strip()
+            cleaned = entry.strip().strip("'\"")
             if not cleaned:
                 continue
 
@@ -126,18 +135,35 @@ def parse_cors_origins(raw_origins: str | None, is_production: bool) -> List[str
     return origins
 
 
+def get_cors_origin_regex() -> str | None:
+    """
+    Return narrowly scoped regex for project-specific Vercel preview/branch deployments.
+    Can be overridden via BOLTI_CORS_ORIGIN_REGEX environment variable.
+    Set to 'none' or 'disabled' to disable regex matching.
+    """
+    custom = os.getenv("BOLTI_CORS_ORIGIN_REGEX")
+    if custom is not None:
+        cleaned = custom.strip().strip("'\"")
+        if cleaned.lower() in ("none", "disabled", "false", "0", ""):
+            return None
+        return cleaned
+    return DEFAULT_VERCEL_PREVIEW_REGEX
+
+
 def get_cors_settings() -> dict:
     """Return dictionary of arguments for FastAPI CORSMiddleware."""
     in_prod = is_production_mode()
     raw = os.getenv("BOLTI_CORS_ORIGINS")
     allowed_origins = parse_cors_origins(raw, in_prod)
+    origin_regex = get_cors_origin_regex()
 
-    # Enable credentials only when specific origins are configured (never with wildcard)
-    has_origins = len(allowed_origins) > 0
-    allow_credentials = has_origins and ("*" not in allowed_origins)
+    # Enable credentials only when specific origins or regex are configured (never with wildcard)
+    has_trusted = (len(allowed_origins) > 0) or (origin_regex is not None)
+    allow_credentials = has_trusted and ("*" not in allowed_origins)
 
     return {
         "allow_origins": allowed_origins,
+        "allow_origin_regex": origin_regex,
         "allow_credentials": allow_credentials,
         "allow_methods": ALLOWED_METHODS,
         "allow_headers": ALLOWED_HEADERS,

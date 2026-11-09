@@ -446,6 +446,7 @@ prod_cors = get_cors_settings()
 test_prod_app.add_middleware(
     CORSMiddleware,
     allow_origins=prod_cors["allow_origins"],
+    allow_origin_regex=prod_cors.get("allow_origin_regex"),
     allow_credentials=prod_cors["allow_credentials"],
     allow_methods=prod_cors["allow_methods"],
     allow_headers=prod_cors["allow_headers"],
@@ -455,6 +456,11 @@ test_prod_app.add_middleware(
 @test_prod_app.get("/api/ping")
 def ping():
     return {"status": "pong"}
+
+
+@test_prod_app.post("/api/auth/register")
+def register():
+    return {"status": "created"}
 
 
 prod_client = TestClient(test_prod_app)
@@ -489,6 +495,149 @@ if "access-control-allow-origin" not in res_rejected.headers:
     ok("Unconfigured origin receives NO Access-Control-Allow-Origin header (rejected by browser)")
 else:
     fail("Unconfigured origin rejection", str(res_rejected.headers))
+
+
+# ---------------------------------------------------------------------------
+# 9. VERCEL PREVIEW & PRODUCTION CORS VERIFICATION (Narrowly Scoped Regex)
+# ---------------------------------------------------------------------------
+# Configure production environment with exact production domain
+os.environ["BOLTI_ENV"] = "production"
+os.environ["BOLTI_CORS_ORIGINS"] = "https://bolti-slip.vercel.app"
+
+vercel_test_app = FastAPI()
+vercel_cors = get_cors_settings()
+vercel_test_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=vercel_cors["allow_origins"],
+    allow_origin_regex=vercel_cors.get("allow_origin_regex"),
+    allow_credentials=vercel_cors["allow_credentials"],
+    allow_methods=vercel_cors["allow_methods"],
+    allow_headers=vercel_cors["allow_headers"],
+)
+
+
+@vercel_test_app.post("/api/auth/register")
+def vercel_register():
+    return {"status": "registered"}
+
+
+vercel_client = TestClient(vercel_test_app)
+
+# 9.1 Production Domain is Accepted
+res_prod = vercel_client.options(
+    "/api/auth/register",
+    headers={
+        "Origin": "https://bolti-slip.vercel.app",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+    },
+)
+if (
+    res_prod.status_code == 200
+    and res_prod.headers.get("access-control-allow-origin") == "https://bolti-slip.vercel.app"
+    and res_prod.headers.get("access-control-allow-credentials") == "true"
+):
+    ok("Production domain accepted (https://bolti-slip.vercel.app) with credentials")
+else:
+    fail("Production domain CORS failed", f"Status: {res_prod.status_code}, headers: {res_prod.headers}")
+
+# 9.2 Current Vercel Preview Deployment is Accepted
+current_preview_origin = "https://bolti-slip-i2ix660fz-kankurtimohammadziyaouddins-projects.vercel.app"
+res_preview = vercel_client.options(
+    "/api/auth/register",
+    headers={
+        "Origin": current_preview_origin,
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+    },
+)
+if (
+    res_preview.status_code == 200
+    and res_preview.headers.get("access-control-allow-origin") == current_preview_origin
+    and res_preview.headers.get("access-control-allow-credentials") == "true"
+):
+    ok("Current Vercel preview domain accepted via regex with credentials")
+else:
+    fail("Current preview CORS failed", f"Status: {res_preview.status_code}, headers: {res_preview.headers}")
+
+# 9.3 Vercel Git Branch Deployment is Accepted
+git_branch_origin = "https://bolti-slip-git-main-kankurtimohammadziyaouddins-projects.vercel.app"
+res_git = vercel_client.options(
+    "/api/auth/register",
+    headers={
+        "Origin": git_branch_origin,
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+    },
+)
+if (
+    res_git.status_code == 200
+    and res_git.headers.get("access-control-allow-origin") == git_branch_origin
+):
+    ok("Vercel Git branch deployment accepted via regex")
+else:
+    fail("Vercel Git branch CORS failed", f"Status: {res_git.status_code}, headers: {res_git.headers}")
+
+# 9.4 Unrelated evil.vercel.app is Rejected
+res_evil = vercel_client.options(
+    "/api/auth/register",
+    headers={
+        "Origin": "https://evil.vercel.app",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+    },
+)
+if res_evil.status_code == 400 and "access-control-allow-origin" not in res_evil.headers:
+    ok("Unrelated evil.vercel.app rejected (HTTP 400, no Access-Control-Allow-Origin)")
+else:
+    fail("evil.vercel.app was NOT rejected", f"Status: {res_evil.status_code}, headers: {res_evil.headers}")
+
+# 9.5 Unrelated Vercel Project under Same User is Rejected
+res_other_project = vercel_client.options(
+    "/api/auth/register",
+    headers={
+        "Origin": "https://other-project-kankurtimohammadziyaouddins-projects.vercel.app",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+    },
+)
+if res_other_project.status_code == 400 and "access-control-allow-origin" not in res_other_project.headers:
+    ok("Unrelated Vercel project rejected (not bolti-slip)")
+else:
+    fail("Other project was NOT rejected", f"Status: {res_other_project.status_code}, headers: {res_other_project.headers}")
+
+# 9.6 HTTP Origin is Rejected in Production
+res_http = vercel_client.options(
+    "/api/auth/register",
+    headers={
+        "Origin": "http://bolti-slip-git-main-kankurtimohammadziyaouddins-projects.vercel.app",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+    },
+)
+if res_http.status_code == 400 and "access-control-allow-origin" not in res_http.headers:
+    ok("Insecure HTTP origin strictly rejected in production")
+else:
+    fail("HTTP origin was NOT rejected", f"Status: {res_http.status_code}, headers: {res_http.headers}")
+
+# 9.7 OPTIONS Preflight Succeeds for Allowed Origin and Rejects Untrusted Origin
+res_untrusted = vercel_client.options(
+    "/api/auth/register",
+    headers={
+        "Origin": "https://malicious-site.org",
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+    },
+)
+if (
+    res_prod.status_code == 200
+    and "access-control-allow-origin" in res_prod.headers
+    and res_untrusted.status_code == 400
+    and "access-control-allow-origin" not in res_untrusted.headers
+):
+    ok("OPTIONS preflight succeeds for allowed origin and rejects untrusted origin")
+else:
+    fail("Preflight comparison failed", f"prod: {res_prod.status_code}, untrusted: {res_untrusted.status_code}")
 
 # Clean up temporary test environment variables
 os.environ.pop("BOLTI_ENV", None)
