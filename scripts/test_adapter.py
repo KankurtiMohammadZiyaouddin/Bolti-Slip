@@ -274,6 +274,8 @@ async def test_postgres_wrapper_mock():
             self.executed_params.append(params)
             if sql.startswith("UPDATE") or sql.startswith("DELETE"):
                 return "UPDATE 1"
+            if sql.startswith("INSERT"):
+                return "INSERT 0 1"
             return "SUCCESS"
 
         def transaction(self):
@@ -286,7 +288,7 @@ async def test_postgres_wrapper_mock():
     mock_conn = MockAsyncpgConnection()
     pg_wrapper = PostgresConnectionWrapper(mock_conn)
 
-    # 1. Test INSERT without RETURNING appends RETURNING id
+    # 1. Test INSERT without RETURNING appends RETURNING id for tables with id
     insert_sql = "INSERT INTO shops (username, password_hash, shop_name) VALUES (?, ?, ?)"
     params = ("newshop", "hash123", "New Shop")
     cur = await pg_wrapper.execute(insert_sql, params)
@@ -294,12 +296,28 @@ async def test_postgres_wrapper_mock():
     assert "RETURNING id;" in mock_conn.executed_queries[0]
     assert "$1, $2, $3" in mock_conn.executed_queries[0]
     assert cur.lastrowid == 101, f"Expected lastrowid=101, got {cur.lastrowid}"
-    ok("PostgresConnectionWrapper automatically appends RETURNING id and populates lastrowid")
+    ok("PostgresConnectionWrapper automatically appends RETURNING id and populates lastrowid for shops")
+
+    # 1.1 Test INSERT into sessions does NOT append RETURNING id (sessions PK is token)
+    session_insert_sql = "INSERT INTO sessions (token, shop_id, created_at, expires_at) VALUES (?, ?, ?, ?)"
+    session_params = ("tok_abc123", 1, "2026-01-01T00:00:00Z", "2026-01-08T00:00:00Z")
+    cur_sess = await pg_wrapper.execute(session_insert_sql, session_params)
+    assert "RETURNING" not in mock_conn.executed_queries[1], "sessions insert must not append RETURNING id"
+    assert "$1, $2, $3, $4" in mock_conn.executed_queries[1]
+    assert cur_sess.lastrowid is None
+    ok("PostgresConnectionWrapper correctly avoids RETURNING id for sessions table")
+
+    # 1.2 Test create_session from auth service with PostgresConnectionWrapper
+    from backend.services.auth import create_session
+    generated_token = await create_session(pg_wrapper, shop_id=1)
+    assert isinstance(generated_token, str) and len(generated_token) > 20
+    assert "RETURNING" not in mock_conn.executed_queries[-1]
+    ok("create_session executes cleanly against PostgresConnectionWrapper without UndefinedColumnError")
 
     # 2. Test SELECT parameter conversion
     select_sql = "SELECT * FROM tickets WHERE id = ? AND shop_id = ?"
     cur2 = await pg_wrapper.execute(select_sql, (1, 1))
-    assert mock_conn.executed_queries[1] == "SELECT * FROM tickets WHERE id = $1 AND shop_id = $2"
+    assert mock_conn.executed_queries[3] == "SELECT * FROM tickets WHERE id = $1 AND shop_id = $2"
     rows = await cur2.fetchall()
     assert len(rows) == 2
     assert rows[0]["username"] == "sharma"
@@ -322,7 +340,7 @@ async def test_postgres_wrapper_mock():
         GROUP BY c.id ORDER BY c.updated_at DESC
     """
     cur4 = await pg_wrapper.execute(cust_list_sql, (1,))
-    assert "$1" in mock_conn.executed_queries[3]
+    assert "$1" in mock_conn.executed_queries[5]
     ok("Customer listing query converted parameters correctly for PostgreSQL")
 
     # 5. Test Session Expiry Query with ISO Timestamp parameter
@@ -334,15 +352,15 @@ async def test_postgres_wrapper_mock():
     """
     now_iso = datetime.now(timezone.utc).isoformat()
     cur5 = await pg_wrapper.execute(session_sql, ("test-token-12345", now_iso))
-    assert "$1" in mock_conn.executed_queries[4] and "$2" in mock_conn.executed_queries[4]
+    assert "$1" in mock_conn.executed_queries[6] and "$2" in mock_conn.executed_queries[6]
     # Verify the normalized parameter is a real datetime object, not a raw string
-    assert isinstance(mock_conn.executed_params[4][1], datetime)
+    assert isinstance(mock_conn.executed_params[6][1], datetime)
     ok("Session token query converted ISO string parameter to datetime for TIMESTAMPTZ comparison")
 
     # 6. Test Speech Confirmation Query
     speech_sql = "SELECT * FROM tickets WHERE id = ? AND shop_id = ?"
     cur6 = await pg_wrapper.execute(speech_sql, (1, 1))
-    assert "$1" in mock_conn.executed_queries[5] and "$2" in mock_conn.executed_queries[5]
+    assert "$1" in mock_conn.executed_queries[7] and "$2" in mock_conn.executed_queries[7]
     ok("Speech confirmation query successfully converted for PostgreSQL")
 
 

@@ -311,8 +311,18 @@ class PostgresConnectionWrapper:
         cleaned_sql = sanitize_sql_for_postgres(sql)
 
         # 2. Check if INSERT requires lastrowid capture via RETURNING id
-        is_insert = cleaned_sql.strip().upper().startswith("INSERT INTO")
-        needs_returning = is_insert and ("RETURNING" not in cleaned_sql.upper())
+        # Only append 'RETURNING id' for tables that have an auto-incrementing 'id' column.
+        # 'sessions' uses 'token' (TEXT/VARCHAR) as its primary key and has no 'id' column.
+        table_match = re.search(
+            r"^\s*INSERT\s+INTO\s+(?:[\"'`]?\w+[\"'`]?\.)?[\"'`]?(\w+)[\"'`]?",
+            cleaned_sql,
+            re.IGNORECASE,
+        )
+        is_insert = table_match is not None
+        target_table = table_match.group(1).lower() if table_match else ""
+        has_id_pk = target_table != "sessions"
+
+        needs_returning = is_insert and has_id_pk and ("RETURNING" not in cleaned_sql.upper())
 
         if needs_returning:
             # Append RETURNING id to capture generated primary key
