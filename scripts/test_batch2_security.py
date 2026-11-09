@@ -24,6 +24,26 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 os.chdir(PROJECT_ROOT)
 
+# ---------------------------------------------------------------------------
+# TEST DATABASE ISOLATION
+# ---------------------------------------------------------------------------
+# Set DATABASE_URL="" in os.environ to force SQLite engine during tests.
+# Setting it to "" prevents load_dotenv(..., override=False) from re-loading it.
+# The original value is restored at exit via atexit.
+# ---------------------------------------------------------------------------
+_ORIGINAL_DATABASE_URL = os.environ.get("DATABASE_URL")
+os.environ["DATABASE_URL"] = ""
+
+def _restore_database_url():
+    """Restore DATABASE_URL on exit if it was originally set."""
+    if _ORIGINAL_DATABASE_URL is not None:
+        os.environ["DATABASE_URL"] = _ORIGINAL_DATABASE_URL
+    else:
+        os.environ.pop("DATABASE_URL", None)
+
+import atexit
+atexit.register(_restore_database_url)
+
 from fastapi.testclient import TestClient
 from backend.config import (
     DEFAULT_DEV_ORIGINS,

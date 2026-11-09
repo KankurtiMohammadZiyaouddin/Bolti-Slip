@@ -22,6 +22,23 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 os.chdir(PROJECT_ROOT)
 
+# ---------------------------------------------------------------------------
+# TEST DATABASE ISOLATION
+# ---------------------------------------------------------------------------
+# Set DATABASE_URL="" to force SQLite engine. Setting it to "" prevents
+# load_dotenv(..., override=False) from re-loading it during tests.
+# ---------------------------------------------------------------------------
+_ORIGINAL_DATABASE_URL = os.environ.get("DATABASE_URL")
+os.environ["DATABASE_URL"] = ""
+
+import atexit as _atexit_seed
+def _restore_database_url_seed():
+    if _ORIGINAL_DATABASE_URL is not None:
+        os.environ["DATABASE_URL"] = _ORIGINAL_DATABASE_URL
+    else:
+        os.environ.pop("DATABASE_URL", None)
+_atexit_seed.register(_restore_database_url_seed)
+
 from backend.database.db import sync_init_db, _MIGRATIONS_DIR
 from backend.services.auth import hash_password, verify_password
 from scripts.setup_first_shop import setup_first_shop, validate_username, validate_password

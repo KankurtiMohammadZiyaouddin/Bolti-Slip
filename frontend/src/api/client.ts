@@ -18,7 +18,8 @@ import type {
   TranscribeResult,
 } from '../types/ticket';
 
-const BASE = '/api';
+const rawBase = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim().replace(/\/+$/, '') || '';
+const BASE = rawBase ? (rawBase.endsWith('/api') ? rawBase : `${rawBase}/api`) : '/api';
 const TOKEN_KEY = 'bolti_slip_auth_token';
 
 // ---------------------------------------------------------------------------

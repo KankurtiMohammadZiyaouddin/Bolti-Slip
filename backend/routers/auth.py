@@ -32,8 +32,8 @@ router = APIRouter(prefix="/api/auth", tags=["auth"])
 @router.post("/register", response_model=AuthResponse, status_code=status.HTTP_201_CREATED)
 async def register(body: ShopRegister, db: aiosqlite.Connection = Depends(get_db)):
     """Register a new shopkeeper account and return an active session token."""
-    # Check if username is already taken
-    cursor = await db.execute("SELECT id FROM shops WHERE username = ? COLLATE NOCASE", (body.username,))
+    # Check if username is already taken (case-insensitive)
+    cursor = await db.execute("SELECT id FROM shops WHERE LOWER(username) = LOWER(?)", (body.username,))
     existing = await cursor.fetchone()
     if existing:
         raise HTTPException(
@@ -77,7 +77,7 @@ async def register(body: ShopRegister, db: aiosqlite.Connection = Depends(get_db
 async def login(request: Request, body: ShopLogin, db: aiosqlite.Connection = Depends(get_db)):
     """Log in with username and password, returning an active session token."""
     cursor = await db.execute(
-        "SELECT id, username, password_hash, shop_name, owner_name, phone, branch, address, created_at FROM shops WHERE username = ? COLLATE NOCASE",
+        "SELECT id, username, password_hash, shop_name, owner_name, phone, branch, address, created_at FROM shops WHERE LOWER(username) = LOWER(?)",
         (body.username.strip(),),
     )
     row = await cursor.fetchone()

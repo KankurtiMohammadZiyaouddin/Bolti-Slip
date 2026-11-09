@@ -32,9 +32,22 @@ os.chdir(PROJECT_ROOT)
 #   - get_db() serves connections to the temp DB
 #   - create_backup() reads the temp DB path
 # Suite 5 still reads the REAL bolti_slip.db directly for preservation checks.
+#
+# CRITICAL: Remove DATABASE_URL from os.environ BEFORE calling sync_init_db()
+# and importing the app. If DATABASE_URL is set (e.g., from root .env loaded
+# by load_dotenv), get_database_engine() returns "postgres" and get_db() will
+# try to connect to the live Neon PostgreSQL database instead of using the
+# isolated temp SQLite DB. This causes:
+#   1. Tests accidentally hitting production data
+#   2. Python 3.14 asyncio event-loop teardown crashes on Windows
 # ---------------------------------------------------------------------------
 _TEMP_DIR = tempfile.mkdtemp(prefix="bolti_test_b1_")
 _TEMP_DB_PATH = Path(_TEMP_DIR) / "test_batch1.db"
+
+# Save and set DATABASE_URL="" to force SQLite engine for test isolation.
+# Note: setting it to "" prevents load_dotenv(..., override=False) from re-populating it from .env.
+_ORIGINAL_DATABASE_URL = os.environ.get("DATABASE_URL")
+os.environ["DATABASE_URL"] = ""
 
 import backend.database.db as _db_mod
 
@@ -48,14 +61,28 @@ assert _db_mod._DB_PATH.resolve() != (PROJECT_ROOT / "bolti_slip.db").resolve(),
 # Explicitly initialize the isolated temporary database schema
 _db_mod.sync_init_db()
 
+# Double-check: ensure DATABASE_URL is still empty so the app always uses SQLite
+os.environ["DATABASE_URL"] = ""
+
 from fastapi.testclient import TestClient
 from backend.main import app
 from backend.services.limiter import limiter
+from backend.database.adapter import get_database_engine
+
+# Final safety check: the engine MUST be sqlite for test isolation
+assert get_database_engine() == "sqlite", \
+    f"SAFETY: Engine is '{get_database_engine()}' instead of 'sqlite'. " \
+    "DATABASE_URL must be cleared for test isolation!"
 
 
 def _cleanup_test_db():
-    """Restore original _DB_PATH and remove temp files."""
+    """Restore original _DB_PATH, DATABASE_URL, and remove temp files."""
     _db_mod._DB_PATH = _ORIGINAL_DB_PATH
+    # Restore DATABASE_URL if it was originally set
+    if _ORIGINAL_DATABASE_URL is not None:
+        os.environ["DATABASE_URL"] = _ORIGINAL_DATABASE_URL
+    else:
+        os.environ.pop("DATABASE_URL", None)
     gc.collect()
     try:
         if _TEMP_DB_PATH.exists():

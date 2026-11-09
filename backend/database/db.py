@@ -15,6 +15,8 @@ import aiosqlite
 from pathlib import Path
 from dotenv import load_dotenv
 
+logger = logging.getLogger(__name__)
+
 # Database file lives at the project root (one level above backend/)
 _PROJECT_ROOT   = Path(__file__).resolve().parent.parent.parent
 _DB_PATH        = _PROJECT_ROOT / "bolti_slip.db"
@@ -145,19 +147,73 @@ def sync_init_db() -> None:
 
 
 async def init_db() -> None:
-    """FastAPI lifespan wrapper for sync_init_db."""
-    sync_init_db()
+    """FastAPI lifespan wrapper for database schema initialization."""
+    engine = get_database_engine()
+    if engine == "postgres":
+        from backend.database.schema_pg import run_postgres_migrations
+        logger.info("Database engine: PostgreSQL. Initializing schema migrations...")
+        pool = await get_pg_pool()
+        async with pool.acquire() as conn:
+            await run_postgres_migrations(conn)
+    else:
+        sync_init_db()
 
 
 # Re-export backup functions for convenient external scheduling and administration
 from backend.database.backup import create_backup, run_backup_retention
+from backend.database.adapter import (
+    get_database_engine,
+    mask_database_url,
+    PostgresConnectionWrapper,
+    SqliteConnectionWrapper,
+)
+
+_pg_pool = None
+
+
+async def get_pg_pool():
+    """Lazily initialize and return the asyncpg connection pool."""
+    global _pg_pool
+    if _pg_pool is None:
+        import asyncpg
+        db_url = os.getenv("DATABASE_URL", "").strip()
+        logger.info("Initializing asyncpg connection pool for PostgreSQL engine...")
+        # Neon serverless endpoints require SSL (sslmode=require)
+        ssl_val = "require" if ("neon.tech" in db_url or "sslmode=require" in db_url) else None
+        # Clean query string parameters that asyncpg handles via explicit kwargs
+        clean_dsn = db_url.split("?")[0] if "?" in db_url else db_url
+        _pg_pool = await asyncpg.create_pool(
+            dsn=clean_dsn,
+            min_size=1,
+            max_size=10,
+            ssl=ssl_val,
+        )
+    return _pg_pool
+
+
+async def close_db() -> None:
+    """Close connection pools during application shutdown."""
+    global _pg_pool
+    if _pg_pool is not None:
+        await _pg_pool.close()
+        _pg_pool = None
 
 
 async def get_db():
     """
-    FastAPI dependency — yields an open aiosqlite connection with
-    row_factory set so rows behave like dicts.
+    FastAPI dependency — yields a live database connection per request.
+    Defaults to SQLite for local development and test isolation.
+    Uses PostgreSQL (via asyncpg connection pool) when DATABASE_URL is configured.
     """
-    async with aiosqlite.connect(_DB_PATH) as db:
-        db.row_factory = aiosqlite.Row
-        yield db
+    if get_database_engine() == "postgres":
+        pool = await get_pg_pool()
+        async with pool.acquire() as conn:
+            wrapper = PostgresConnectionWrapper(conn)
+            try:
+                yield wrapper
+            finally:
+                await wrapper.close()
+    else:
+        async with aiosqlite.connect(_DB_PATH) as db:
+            db.row_factory = aiosqlite.Row
+            yield db

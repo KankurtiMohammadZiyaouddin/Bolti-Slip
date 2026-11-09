@@ -107,6 +107,12 @@ def create_backup(
     """
     global _last_backup_time, _last_backup_path
 
+    # SQLite backups are skipped when running on PostgreSQL
+    from backend.database.adapter import get_database_engine
+    if get_database_engine() == "postgres":
+        logger.info("Active database engine is PostgreSQL. SQLite backup skipped.")
+        return None
+
     # Resolve source database path
     if source_db_path is None:
         from backend.database.db import _DB_PATH

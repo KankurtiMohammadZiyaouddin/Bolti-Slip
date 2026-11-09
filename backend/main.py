@@ -25,8 +25,9 @@ from fastapi.responses import JSONResponse
 from slowapi.errors import RateLimitExceeded
 
 from backend.config import get_cors_settings
+from backend.database.adapter import get_database_engine
 from backend.database.backup import create_backup
-from backend.database.db import init_db
+from backend.database.db import close_db, init_db
 from backend.models.ticket import HealthResponse
 from backend.routers import transcription, tickets, speech, extraction, auth, customers
 from backend.services.limiter import limiter
@@ -38,8 +39,10 @@ from backend.services.limiter import limiter
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_db()
-    create_backup()
+    if get_database_engine() == "sqlite":
+        create_backup()
     yield
+    await close_db()
 
 
 # ---------------------------------------------------------------------------
