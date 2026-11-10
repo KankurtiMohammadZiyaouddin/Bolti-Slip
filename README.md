@@ -18,11 +18,14 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4.0-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white)](https://tailwindcss.com)
 [![PWA Ready](https://img.shields.io/badge/PWA-Installable_Android-purple?style=flat-square&logo=pwa&logoColor=white)](#key-features)
 [![Database](https://img.shields.io/badge/Database-SQLite_%7C_PostgreSQL-336791?style=flat-square&logo=postgresql&logoColor=white)](#key-features)
-[![Regression Tests](https://img.shields.io/badge/Tests-156%2F156_Passing-emerald?style=flat-square&logo=checkmarx&logoColor=white)](#automated-testing--verification)
+[![Regression Tests](https://img.shields.io/badge/Tests-156%2B_Passing-emerald?style=flat-square&logo=checkmarx&logoColor=white)](#automated-testing--verification)
 
-[Solution Pitch](#the-problem--our-solution) • [Workflow](#how-it-works) • [Features](#key-features) • [Gnani AI Integration](#gnani-ai-integration) • [Architecture](#system-architecture) • [Getting Started](#getting-started) • [Deployment](#production-readiness--deployment)
+[**📄 Solution Pitch (1-Pager)**](SOLUTION_PITCH.md) • [Overview](#the-problem--our-solution) • [Workflow](#how-it-works) • [Features](#key-features) • [Gnani AI Integration](#gnani-ai-integration) • [Architecture](#system-architecture) • [Getting Started](#getting-started) • [Deployment](#production-readiness--deployment)
 
 </div>
+
+> 📄 **Looking for the competition pitch document?**  
+> Read the concise executive summary in [**SOLUTION_PITCH.md**](SOLUTION_PITCH.md), designed specifically for Gnani.ai challenge evaluators.
 
 ---
 
@@ -31,16 +34,17 @@
 | Attribute | Details |
 | :--- | :--- |
 | **Project Name** | **Bolti Slip (बोलती स्लिप)** |
-| **Initiative** | **Great Indian AI Internship Challenge by Gnani.ai** |
+| **Challenge** | **Great Indian AI Internship Challenge by Gnani.ai** |
 | **Official Tagline** | *"Jo Bola, Wahi Likha. Jo Likha, Wahi Confirm."* |
-| **Primary Domain** | Micro-SaaS for Electronics, Appliances, and Mobile Repair Shops |
-| **GitHub Repository** | [github.com/KankurtiMohammadZiyaouddin/Bolti-Slip](https://github.com/KankurtiMohammadZiyaouddin/Bolti-Slip) |
-| **Speech-to-Text (STT)** | **Gnani Prisma v3.0** (`indic-auto`, `codemix`) |
-| **Text-to-Speech (TTS)** | **Gnani Timbre v3.0** (`hi-IN`, Voice: `Devansh`) |
+| **Developer** | **Kankurti Mohammad Ziyaouddin** ([GitHub Profile](https://github.com/KankurtiMohammadZiyaouddin)) |
+| **Repository** | [github.com/KankurtiMohammadZiyaouddin/Bolti-Slip](https://github.com/KankurtiMohammadZiyaouddin/Bolti-Slip) |
+| **Speech-to-Text (STT)** | **Gnani Prisma v3.0** (`indic-auto`, `codemix`) via `https://api.vachana.ai/stt/v3` |
+| **Text-to-Speech (TTS)** | **Gnani Timbre v3.0** (`hi-IN`, Voice: `Devansh`) via `https://api.vachana.ai/api/v1/tts/inference` |
 | **Frontend Stack** | React 18, TypeScript, Vite 5, Tailwind CSS v4, Workbox PWA |
 | **Backend Stack** | FastAPI (Python 3.10+ / 3.14), Uvicorn, SlowAPI, Pydantic v2 |
-| **Database Engines** | Dual-Engine: **SQLite** (Local Dev & Auto-Backups) + **Neon PostgreSQL** (Cloud Production) |
-| **Deployment Target** | Render Web Service (FastAPI) + Vercel / Render Static (React PWA) |
+| **Database Engines** | Dual-Engine: **SQLite** (Local Dev & Automated Backups) + **Neon PostgreSQL** (Cloud Production) |
+| **Verified Execution** | Local: `http://localhost:5173` (Frontend) & `http://127.0.0.1:8000` (Backend API) |
+| **Cloud Target** | Deployment-ready configurations prepared for Render (FastAPI) and Neon PostgreSQL |
 
 ---
 
@@ -49,22 +53,23 @@
 ### The Challenge Faced by Local Repair Shops
 
 India's local electronics, smartphone, and home appliance repair shops operate in fast-paced, high-friction environments:
-- **Manual, Fragile Paper Slips:** Shopkeepers write estimates and customer complaints on paper chits that get oil-stained, torn, or misplaced, leading to loss of accountability.
-- **Typing Friction with Busy Hands:** Technicians handle dirty components, screwdrivers, and soldering irons. Pausing work to type customer names, serial numbers, and fault descriptions on tiny touchscreen keyboards is slow and cumbersome.
-- **Cost and Delivery Date Disputes:** Verbal agreements on repair estimates (*"₹350 me ho jayega"*) or delivery timelines (*"Friday shaam tak le jaana"*) frequently result in customer arguments at pick-up time.
-- **Scattered Customer History:** Without a lightweight, searchable record system, shopkeepers cannot track repeat customers, device warranties, or open repair statuses.
+- **Manual, Fragile Paper Slips:** Shopkeepers write estimates and customer complaints on paper chits that get oil-stained, torn, or misplaced, leading to lost customer records.
+- **Typing Friction with Busy Hands:** Technicians frequently handle dirty components, screwdrivers, and soldering irons. Typing customer names, serial numbers, and fault descriptions on tiny touchscreens with busy hands is awkward and slow.
+- **Cost and Delivery Date Disputes:** Verbal agreements on repair estimates (*"₹350 me ho jayega"*) or delivery timelines (*"Friday tak ready milega"*) often result in customer disagreements during pick-up.
+- **Scattered Customer History:** Without a lightweight, searchable record system, shopkeepers cannot look up repeat customers, previous repairs, or open ticket statuses.
 
 ### The Bolti Slip Solution
 
-**Bolti Slip** transforms any smartphone or browser into an intelligent, bilingual voice clerk for Indian repair businesses:
+**Bolti Slip** transforms any smartphone or browser into an intelligent, voice-assisted repair ticket clerk:
 
-1. **Speak Naturally in Hinglish or Hindi:** The shopkeeper taps one button and speaks naturally:  
-   > *"Sharma ji ka Samsung refrigerator cooling nahi kar raha. Compressor check karna hai, advance 500 rupaye liya aur Friday tak ready karke dena hai."*
-2. **High-Accuracy Speech-to-Text via Gnani Prisma v3.0:** The spoken audio is converted to text using Gnani's proprietary **Prisma v3.0** engine with native Indian code-mixed recognition (`indic-auto`, `codemix`).
-3. **Zero-Hallucination Deterministic Extraction:** A pure-Python rule-based extraction engine normalizes the transcription, identifying the customer name, phone number, device category, brand, reported fault, advance payment, estimated cost, and promised delivery date without LLM hallucination.
-4. **Spoken Voice Confirmation via Gnani Timbre v3.0:** As soon as the ticket is saved, Gnani's **Timbre v3.0** voice synthesis speaks out an audible Hindi confirmation to the customer right across the counter:  
+1. **Speak Naturally in Hindi or Hinglish:** The shopkeeper taps one button and speaks the repair details:  
+   > *"Customer ka Samsung refrigerator cooling nahi kar raha. Compressor check karna hai, advance 500 rupaye liya aur Friday tak ready karke dena hai."*
+2. **Bilingual Speech-to-Text via Gnani Prisma v3.0:** Spoken audio is transcribed using Gnani's **Prisma v3.0** engine with code-mixed recognition (`indic-auto`, `codemix`), handling mixed Hindi and English repair terminology.
+3. **Deterministic Rule-Based Extraction:** A transparent, pure-Python regex and rule engine identifies candidate ticket fields (device category, brand, reported problem, customer phone number, estimated cost, advance, and promised delivery date) directly from explicitly stated phrases.
+4. **Interactive Review & Verification:** Because real-world speech may have dialect variations or ambient shop noise, the parsed fields are presented as an editable draft. Ambiguous dates (e.g. named weekdays) are flagged in `needs_confirmation` for the technician to review and correct before saving.
+5. **Audible Hindi Confirmation via Gnani Timbre v3.0:** As soon as the ticket is saved, Gnani's **Timbre v3.0** voice synthesis plays an audible confirmation over the counter:  
    > *"आपका रिपेयर टिकट BLT-0005 सफलतापूर्वक तैयार हो गया है। ग्राहक Sharma ji। उपकरण: Samsung Refrigerator। अनुमानित लागत: 500 रुपये। धन्यवाद!"*
-5. **Installable Android PWA & CRM:** Generates a permanent digital job card (`BLT-XXXX`), links it to the customer directory, tracks lifecycle stages (`open` → `in_progress` → `resolved` → `closed`), and works offline-ready as an installable Android Progressive Web App.
+6. **Digital Job Card & Customer History:** The ticket is assigned a sequential number (`BLT-XXXX`), automatically linked to the customer's phone number, and tracked on an interactive dashboard.
 
 ---
 
@@ -81,41 +86,39 @@ flowchart TD
         C --> D["FastAPI POST /api/transcribe"]
         D --> E["FFmpeg Audio Converter<br/>(Converts WebM to 16kHz Mono PCM WAV)"]
         E --> F["Gnani Prisma v3.0 STT<br/>(model=prisma-v3.0, indic-auto, codemix)"]
-        F --> G["Accurate Bilingual Transcript"]
+        F --> G["Bilingual Transcript Text"]
     end
 
-    subgraph S3["3. Deterministic Extraction"]
-        G --> H["TicketExtractor (Pure-Python Regex & Rule Engine)"]
-        H --> I["Structured Fields: Device, Brand, Issue, Cost, Date, Customer"]
-        H -.-> J["Flags Ambiguous Dates / Missing Fields in 'needs_confirmation'"]
-    end
-
-    subgraph S4["4. Shopkeeper Review & Commit"]
+    subgraph S3["3. Assistive Extraction & Review"]
+        G --> H["TicketExtractor (Rule-Based Engine)"]
+        H --> I["Candidate Fields: Device, Brand, Issue, Cost, Date, Phone"]
+        H -.-> J["Flags Ambiguous Dates & Missing Fields in needs_confirmation"]
         I --> K["Interactive Review Screen"]
-        K --> L["Shopkeeper Verifies / Edits Details"]
-        L --> M["POST /api/tickets (Generates BLT-XXXX)"]
+        J --> K
+        K --> L["Technician Verifies & Edits Draft"]
     end
 
-    subgraph S5["5. Spoken Confirmation & CRM"]
+    subgraph S4["4. Ticket Creation & CRM"]
+        L --> M["POST /api/tickets (Generates BLT-XXXX)"]
         M --> N["Auto-Link / Create Customer in Directory"]
         M --> O["POST /api/tickets/:id/confirm"]
         O --> P["Gnani Timbre v3.0 TTS<br/>(model=timbre-v3.0, Devansh voice, hi-IN)"]
-        P --> Q["Spoken Audio Played Aloud Over Counter"]
+        P --> Q["Spoken Confirmation Played Over Counter"]
         M --> R["Dashboard & Ticket Lifecycle Tracker"]
     end
 ```
 
 ### Detailed Workflow Step-by-Step
 
-1. **Secure Shopkeeper Authentication:** The technician registers or logs in with their shop credentials. Sessions are protected via cryptographic bearer tokens and multi-tenant database isolation.
-2. **One-Tap Voice Intake:** The technician presses the voice recorder on desktop or mobile. Bolti Slip records the spoken instructions.
-3. **Automated Audio Conversion Pipeline:** Mobile browsers typically capture audio in WebM/Opus format. Bolti Slip's backend automatically inspects EBML headers and transparently converts the stream using FFmpeg to 16 kHz 16-bit mono PCM WAV before passing it to Gnani Prisma.
-4. **Bilingual Transcription:** Gnani Prisma v3.0 returns the recognized text with detected language metadata and processing timings.
-5. **Rule-Based Field Parsing:** The extractor categorizes 16+ consumer electronics categories (Mixer Grinder, TV, Laptop, Fridge, Washing Machine, Geyser, Fan, etc.), top Indian brands (Samsung, LG, Whirlpool, Philips, Bajaj, Havells, etc.), 10-digit Indian mobile numbers, currency values, and delivery dates. Ambiguous relative days (e.g., *"Friday"*) are explicitly highlighted in a `needs_confirmation` alert rather than guessed.
-6. **Ticket Review & Validation:** The shopkeeper inspects the generated slip. Any missing fields can be edited directly on the form.
-7. **Ticket Creation & Global Numbering:** When committed, the ticket is assigned a sequential tracking identifier (`BLT-0001`, `BLT-0002`) and linked to the customer's phone number.
-8. **Spoken Audio Playback:** The backend dynamically synthesizes a natural Hindi confirmation using Gnani Timbre v3.0 and streams raw WAV audio directly to the frontend player.
-9. **Dashboard & Lifecycle Tracking:** The job card is visible on the dashboard, where technicians can update statuses from `open` to `in_progress`, `resolved`, and `closed`.
+1. **Shopkeeper Authentication:** The technician logs in with their credentials. Sessions are protected via cryptographic bearer tokens and per-shop data isolation.
+2. **One-Tap Voice Recording:** The technician taps the mic icon. Bolti Slip records the spoken details.
+3. **Automated Audio Conversion:** Browser recordings (typically WebM/Opus) are automatically detected and converted by the backend via FFmpeg to 16 kHz 16-bit mono PCM WAV before forwarding to Gnani Prisma.
+4. **Bilingual Transcription:** Gnani Prisma v3.0 returns the recognized text with detected language metadata.
+5. **Deterministic Field Parsing:** The extractor searches for 16+ consumer electronics categories (Mixer Grinder, TV, Laptop, Fridge, Washing Machine, Geyser, Fan, etc.), top Indian brands, 10-digit mobile numbers, currency values, and delivery dates. Ambiguous dates (such as named weekdays) are placed into `needs_confirmation`.
+6. **Technician Review & Adjustment:** The extracted draft is shown in a structured form. The technician checks the values, makes any needed adjustments, and confirms the slip.
+7. **Ticket Creation & Global Numbering:** The ticket is committed to the database with a sequential tracking identifier (`BLT-0001`, `BLT-0002`) and linked to the customer's phone number.
+8. **Spoken Audio Confirmation:** The backend synthesizes a natural Hindi confirmation via Gnani Timbre v3.0 and streams raw WAV audio to the client, providing audible confirmation across the counter.
+9. **Dashboard Management:** Job cards are tracked on the dashboard, where technicians update statuses from `open` to `in_progress`, `resolved`, and `closed`.
 
 ---
 
@@ -124,53 +127,53 @@ flowchart TD
 ### 🎙️ 1. Bilingual Voice Intake & Transcription
 - Native support for Hindi, Indian English, and conversational Hinglish code-mixing.
 - Powered directly by the **Gnani Prisma v3.0** STT API (`https://api.vachana.ai/stt/v3`).
-- Automatic client-side and server-side audio format normalization (FFmpeg WebM/Opus to PCM WAV).
+- Automatic audio container inspection and transparent conversion of WebM/Opus audio to PCM WAV via FFmpeg.
 
-### ⚙️ 2. Zero-Hallucination Deterministic Extraction
-- Pure-Python regex and entity extraction engine (`TicketExtractor`).
-- No external LLM dependencies, eliminating hallucinations of critical repair costs, phone numbers, or dates.
-- Extracts: **Device Category**, **Brand/Model**, **Customer Name**, **Indian Phone Number**, **Reported Problem**, **Estimated Cost**, **Advance Paid**, and **Delivery Date**.
-- Emits explicit `needs_confirmation` warnings for ambiguous relative dates.
+### ⚙️ 2. Assistive Rule-Based Extraction with Review Workflow
+- Pure-Python regex and pattern extraction engine (`TicketExtractor`).
+- Designed to extract only explicitly stated values without generative AI speculation or cost hallucinations.
+- Recognizes 16+ electronic equipment categories, popular brands, Indian phone numbers, problem keywords, costs, and dates.
+- Flags ambiguous relative dates (e.g., *"Friday"*) in `needs_confirmation` and leaves unmapped phrases in `unresolved_phrases`, giving technicians clear oversight to review and correct drafts.
 
 ### 🔊 3. Spoken Ticket Confirmation (TTS)
-- Closes the trust loop between the shopkeeper and customer.
+- Closes the agreement loop between technician and customer.
 - Powered by **Gnani Timbre v3.0** TTS (`https://api.vachana.ai/api/v1/tts/inference`) using the natural Hindi voice **Devansh**.
-- Generates and streams raw 48 kHz 16-bit WAV audio confirming ticket number, customer name, device, and quoted estimate.
+- Streams linear PCM WAV audio confirming ticket number, customer name, device, and quoted estimate aloud across the counter.
 
 ### 🏪 4. Multi-Tenant Shop Isolation & Security
 - Isolated tenant workspaces: Every ticket, customer profile, and session query is strictly filtered by `shop_id`.
-- PBKDF2-SHA256 password hashing with unique salt and iterations.
+- PBKDF2-SHA256 password hashing with unique salts and iterations.
 - Cryptographically secure 64-character hex session tokens (`secrets.token_hex(32)`).
-- Session management allowing shopkeepers to view active sessions or revoke other devices.
+- Session management allowing shopkeepers to view active sessions and revoke secondary devices.
 - IP-based brute-force protection using SlowAPI rate limiting (10 attempts/minute on login).
 
 ### 👥 5. Customer Directory & Repair History
 - Automatic customer resolution: creating a ticket with a phone number automatically links or registers the customer profile under the active shop.
-- Fast customer search by name or mobile number.
-- Complete historical record of all repairs, past devices, and statuses for each customer.
+- Customer search by name or mobile number.
+- Historical record of all past repairs, devices, and statuses for each customer.
 
 ### 📊 6. Job Card Lifecycle Management
 - Sequential global ticket identification (`BLT-XXXX`).
 - Four lifecycle stages: `open`, `in_progress`, `resolved`, `closed`.
-- One-click status updates with real-time badge updates.
+- Status updates with responsive status badges.
 
 ### 📱 7. Installable Android PWA (Progressive Web App)
 - W3C Web App Manifest configured for standalone display on Android (`display: standalone`, `theme_color: #4F46E5`).
 - Complete icon suite: 192×192, 512×512, maskable icons, and SVG.
-- Offline static shell caching via Vite PWA and Workbox.
-- **Strict Privacy Rule:** Service worker enforces `NetworkOnly` on `/api/*` routes, guaranteeing customer data and audio files are never cached insecurely in browser storage.
+- Offline static shell caching via Vite PWA and Workbox for fast application startup.
+- **Strict Privacy Rule:** All `/api/*` routes (speech, transcription, tickets, auth) enforce `NetworkOnly` and require an active network connection; sensitive customer data is never cached in browser storage.
 
 ### 🗄️ 8. Dual-Engine Async Database Architecture
 - **Development & Testing:** Zero-configuration local **SQLite** via `aiosqlite`.
-- **Automated SQLite Backups:** Non-blocking point-in-time snapshots created at startup using Python's native `sqlite3.Connection.backup()` API with configurable retention cleanup (default: 30 days).
-- **Cloud Production:** Automatic seamless switch to **Neon PostgreSQL** via `asyncpg` when `DATABASE_URL` is configured.
-- Transparent query rewriting and parameter tokenization (`?` to `$1`, `$2`, ...).
+- **Automated SQLite Backups:** Point-in-time database snapshots created at startup using Python's native `sqlite3.Connection.backup()` API with configurable retention cleanup (default: 30 days).
+- **Cloud Production:** Automatic switch to **Neon PostgreSQL** via `asyncpg` when `DATABASE_URL` is configured.
+- Safe query rewriting and parameter tokenization (`?` to `$1`, `$2`, ...).
 
 ---
 
 ## 🤖 Gnani AI Integration
 
-Bolti Slip leverages the official **Gnani.ai (Vachana.ai)** developer APIs:
+Bolti Slip integrates the official **Gnani.ai (Vachana.ai)** developer APIs:
 
 ```
                                   +---------------------------------------+
@@ -187,8 +190,8 @@ Bolti Slip leverages the official **Gnani.ai (Vachana.ai)** developer APIs:
                                                      v
                                   +---------------------------------------+
                                   |         BOLTI SLIP BACKEND            |
-                                  |  - Rule-Based Extraction (No LLM)     |
-                                  |  - Ticket Validation & DB Commit      |
+                                  |  - Rule-Based Extraction              |
+                                  |  - Human Review & DB Commit           |
                                   +---------------------------------------+
                                                      |
                                            (Confirmation Sentence)
@@ -209,9 +212,9 @@ Bolti Slip leverages the official **Gnani.ai (Vachana.ai)** developer APIs:
 - **API Endpoint:** `https://api.vachana.ai/stt/v3`
 - **Authentication:** `X-API-Key-ID` header loaded from `GNANI_API_KEY_ID`
 - **Model:** `prisma-v3.0`
-- **Language Code:** `indic-auto` (automatic detection across Indian languages)
-- **Format:** `codemix` (critical for conversational Hinglish spoken in repair markets)
-- **Supported Containers:** WAV, MP3, M4A, FLAC, OGG, AAC
+- **Language Code:** `indic-auto` (automatic Indian language detection)
+- **Format:** `codemix` (critical for colloquial Hindi-English mixed vocabulary)
+- **Accepted Formats:** WAV, MP3, M4A, FLAC, OGG, AAC
 - **Implementation File:** [`backend/services/prisma.py`](backend/services/prisma.py)
 - **Audio Pre-processing:** [`backend/services/audio_converter.py`](backend/services/audio_converter.py) handles WebM/Opus detection and FFmpeg conversion.
 
@@ -220,17 +223,17 @@ Bolti Slip leverages the official **Gnani.ai (Vachana.ai)** developer APIs:
 - **API Endpoint:** `https://api.vachana.ai/api/v1/tts/inference`
 - **Authentication:** `X-API-Key-ID` header loaded from `GNANI_API_KEY_ID`
 - **Model:** `timbre-v3.0`
-- **Selected Voice:** `Devansh` (warm, natural male Hindi persona)
+- **Selected Voice:** `Devansh` (natural male Hindi voice)
 - **Language Code:** `hi-IN`
 - **Output Container:** Linear PCM WAV (48,000 Hz, 16-bit, mono)
 - **Implementation File:** [`backend/services/timbre.py`](backend/services/timbre.py)
 - **Audio Route:** [`backend/routers/speech.py`](backend/routers/speech.py) (`POST /api/tickets/{id}/confirm`)
 
-### 3. Clear Architectural Separation: Extraction vs. AI Speech
+### 3. Engineering Transparency: Extraction vs. AI Speech
 
 > [!NOTE]
-> **Honest Engineering Note for Evaluators:**  
-> Bolti Slip utilizes Gnani AI exclusively for its core technological strength: **high-accuracy Indian speech-to-text and expressive text-to-speech**. Ticket parsing is performed by an internal, deterministic Python rule engine (`backend/services/ticket_extractor.py`) rather than a generative LLM. This design decision guarantees 100% predictable pricing, sub-second latency, zero API costs for extraction, and absolute immunity against financial or delivery date hallucinations.
+> **Engineering Note for Evaluators:**  
+> Bolti Slip utilizes Gnani AI for its core speech capabilities: **speech-to-text recognition via Prisma v3.0** and **text-to-speech synthesis via Timbre v3.0**. Ticket parsing is handled by an internal rule-based Python module (`backend/services/ticket_extractor.py`) rather than a generative LLM. This prevents generative hallucinations of repair costs, phone numbers, or dates, while presenting the technician with an editable draft to verify before confirming the ticket.
 
 ---
 
@@ -240,21 +243,21 @@ Bolti Slip leverages the official **Gnani.ai (Vachana.ai)** developer APIs:
 | :--- | :--- | :--- | :--- |
 | **Frontend Framework** | **React** | `18.3.1` | Component-based reactive user interface |
 | **Language** | **TypeScript** | `5.6.2` | Type-safe models, API clients, and state contracts |
-| **Build & Tooling** | **Vite** | `5.4.9` | Rapid HMR dev server and optimized production bundler |
-| **Styling** | **Tailwind CSS** | `v4.3.5` | Modern utility-first CSS with Indigo/Purple theme |
+| **Build & Tooling** | **Vite** | `5.4.9` | Development server and production bundler |
+| **Styling** | **Tailwind CSS** | `v4.3.5` | Modern utility-first CSS styling |
 | **Routing** | **React Router DOM** | `6.27.0` | Client-side routing with protected route guards |
-| **PWA Engine** | **Vite Plugin PWA** | `2.0.0` | Service Worker generation, caching, and manifest linking |
+| **PWA Engine** | **Vite Plugin PWA** | `2.0.0` | Service Worker generation and manifest integration |
 | **Backend Framework** | **FastAPI** | `0.115+` | Asynchronous ASGI REST API framework |
 | **ASGI Server** | **Uvicorn** | `0.30+` | High-performance asynchronous HTTP server |
-| **Data Validation** | **Pydantic** | `v2.10+` | Strict schema validation and serialization |
+| **Data Validation** | **Pydantic** | `v2.10+` | Strict request/response schema validation |
 | **Speech-to-Text** | **Gnani Prisma v3.0** | REST API | Bilingual Hindi/Hinglish speech transcription |
-| **Text-to-Speech** | **Gnani Timbre v3.0** | REST API | Spoken Hindi ticket confirmation playback |
+| **Text-to-Speech** | **Gnani Timbre v3.0** | REST API | Spoken Hindi ticket confirmation synthesis |
 | **Audio Processing** | **FFmpeg** | Binary CLI | Transparent WebM/Opus to 16 kHz PCM WAV conversion |
-| **Rate Limiting** | **SlowAPI** | `0.1.10+` | In-memory token bucket rate limiting on auth endpoints |
-| **Local Database** | **aiosqlite / SQLite3** | Python 3 stdlib | Async SQLite driver for local dev & testing |
-| **Cloud Database** | **asyncpg / PostgreSQL**| `>=0.30.0` | High-throughput async PostgreSQL client (Neon) |
+| **Rate Limiting** | **SlowAPI** | `0.1.10+` | Rate limiting on authentication endpoints |
+| **Local Database** | **aiosqlite / SQLite3** | Python 3 stdlib | Async SQLite driver for local development & testing |
+| **Cloud Database** | **asyncpg / PostgreSQL**| `>=0.30.0` | High-throughput async PostgreSQL client for Neon |
 | **Database Abstraction**| **Bolti Adapter** | Custom | Unified multi-engine query abstraction layer |
-| **Testing** | **Pytest / Custom Suites**| Python 3 | 156 comprehensive regression and security tests |
+| **Automated Testing** | **Pytest / Custom Suites**| Python 3 | 13 unit tests + 156 integration/security tests |
 
 ---
 
@@ -266,7 +269,7 @@ flowchart LR
         UI["React 18 SPA"]
         REC["MediaRecorder Audio API"]
         PLAYER["HTML5 Audio Player"]
-        SW["Workbox Service Worker"]
+        SW["Workbox Service Worker<br/>(Static Assets Cached; API NetworkOnly)"]
     end
 
     subgraph APILayer["FastAPI Application Server"]
@@ -316,19 +319,11 @@ flowchart LR
     SQLITE_DB --> BACKUP_SVC
 ```
 
-### Architectural Highlights
-
-- **Zero-Friction Engine Switching:** The database layer (`backend/database/adapter.py`) dynamically inspects `DATABASE_URL`. If unset, it routes queries to `aiosqlite` on local disk. If set to a `postgresql://` URI, it initializes an `asyncpg` connection pool with SSL.
-- **Fail-Safe CORS Architecture:** In development, localhost origins (`5173`, `3000`) are automatically allowed. In production mode (`BOLTI_ENV=production`), wildcard `*` is strictly blocked and rejected at startup, with support for strict origin whitelists and project-scoped Vercel deployment preview regexes.
-- **Microphone Security Context:** The frontend audio recorder verifies that the page is running in a secure context (`HTTPS` or `localhost`) before requesting microphone hardware permissions.
-
 ---
 
-## 🎨 User Interface & Design System
+## 🎨 User Interface Previews
 
-Bolti Slip follows a clean, modern Material-inspired design language with an **Indigo & Deep Navy** palette (`primary: #4F46E5`, `surface: #F8F9FF`), crafted specifically for high legibility on shop countertops and mobile repair benches.
-
-### Interface Previews
+Bolti Slip uses a Material-inspired layout styled in an **Indigo & Deep Navy** palette (`primary: #4F46E5`, `surface: #F8F9FF`), built for readability on repair shop counters.
 
 | Voice Intake & Ticket Creation | Dashboard & Ticket Overview |
 | :---: | :---: |
@@ -338,19 +333,19 @@ Bolti Slip follows a clean, modern Material-inspired design language with an **I
 | Ticket History & Management | Mobile PWA Viewport |
 | :---: | :---: |
 | ![Ticket History Desktop](design-references/desktop/ticket_history_bolti_slip/screen.png) | ![Mobile Voice Intake](design-references/mobile/voice_intake_bolti_slip_mobile_1/screen.png) |
-| *Sequential BLT-XXXX tracking with status filtering and cost summaries* | *Optimized for one-handed operation on Android mobile screens* |
+| *Sequential BLT-XXXX tracking with status filtering and cost summaries* | *Optimized for one-handed operation on mobile screens* |
 
 ---
 
 ## 🚀 Getting Started
 
-Follow these instructions to run Bolti Slip locally on your workstation.
+Follow these instructions to run Bolti Slip locally.
 
 ### 1. Prerequisites
 
 - **Python:** 3.10 or newer (tested on Python 3.10, 3.11, 3.12, 3.14 on Windows & Linux)
 - **Node.js:** v18.0 or newer & `npm`
-- **FFmpeg:** Installed and available in system `PATH` (required for converting mobile WebM/Opus audio to PCM WAV)
+- **FFmpeg:** Installed and available in system `PATH` (converts browser WebM/Opus audio to PCM WAV)
 - **Gnani AI API Key:** Obtain from [vachana.ai](https://vachana.ai)
 
 ### 2. Clone Repository & Setup Virtual Environment
@@ -380,7 +375,7 @@ Copy the example environment configuration:
 cp .env.example .env
 ```
 
-Edit `.env` and provide your Gnani API credentials:
+Edit `.env` and add your Gnani API key:
 ```ini
 # Gnani AI API Key (required for voice features)
 GNANI_API_KEY_ID=your_gnani_api_key_here
@@ -388,20 +383,20 @@ GNANI_API_KEY_ID=your_gnani_api_key_here
 # Environment Mode
 BOLTI_ENV=development
 
-# Optional: Seed password for initial first-time database creation
+# Optional: Seed password for first-time database initialization
 BOLTI_SEED_PASSWORD=YourSecurePassword123
 ```
 
 ### 4. Start the Application
 
-You can start the backend and frontend in two separate terminals:
+Start the backend and frontend in two separate terminals:
 
 #### Terminal 1 — FastAPI Backend:
 ```bash
 # From project root with .venv activated:
 uvicorn backend.main:app --reload --port 8000
 ```
-*API will be live at `http://127.0.0.1:8000`. Interactive OpenAPI documentation available at `http://127.0.0.1:8000/docs`.*
+*API will run at `http://127.0.0.1:8000`. Interactive OpenAPI documentation available at `http://127.0.0.1:8000/docs`.*
 
 #### Terminal 2 — React Frontend (Vite):
 ```bash
@@ -409,7 +404,7 @@ cd frontend
 npm install
 npm run dev
 ```
-*Frontend will be live at `http://localhost:5173`.*
+*Frontend will run at `http://localhost:5173`.*
 
 ---
 
@@ -419,8 +414,8 @@ When starting on a fresh database with zero shops, choose any one of the followi
 
 ### Method A: Web Interface Registration (Recommended)
 1. Open `http://localhost:5173/register` in your web browser.
-2. Enter your shop name (e.g., *"Sharma Electronics"*), owner name, username, and password (minimum 6 characters).
-3. Click **"नई दुकान जोड़ें (Register Shop)"**. You will be logged in immediately.
+2. Enter your shop name, owner name, username, and password (minimum 6 characters).
+3. Click **"नई दुकान जोड़ें (Register Shop)"** to log in immediately.
 
 ### Method B: CLI Helper Script
 Run the interactive setup helper in your terminal:
@@ -430,16 +425,16 @@ python scripts/setup_first_shop.py --username admin --shop-name "City Repair Cen
 *(The script exits safely without making changes if a shop already exists, preventing account takeovers.)*
 
 ### Method C: Environment Seed
-Set `BOLTI_SEED_PASSWORD` in `.env`. When `init_db()` runs on a completely empty database, it will automatically provision the default shop (`sharma`) with that password.
+Set `BOLTI_SEED_PASSWORD` in `.env`. When `init_db()` runs on a completely empty database, it provisions the default initial shop (`sharma`) with that password.
 
 ---
 
 ## 🧪 Automated Testing & Verification
 
-Bolti Slip includes a rigorous, multi-tiered automated test suite covering security, authentication, database migrations, audio compatibility, and PWA criteria.
+Bolti Slip includes automated test suites covering rule-based extraction, database engine switching, multi-shop security, migration scripts, and PWA criteria.
 
 ```bash
-# 1. Run core ticket extraction unit tests (covers 8 Hindi/English/Hinglish scenarios)
+# 1. Run ticket extractor unit tests (13 test scenarios)
 pytest tests/test_ticket_extractor.py -v
 
 # 2. Run database abstraction adapter tests (29 tests)
@@ -451,7 +446,7 @@ python scripts/test_seed_setup.py
 # 4. Run multi-shop security and authentication test suite (31 tests)
 python scripts/test_batch2_security.py
 
-# 5. Run PostgreSQL schema & migration validation (29 tests)
+# 5. Run PostgreSQL schema & migration validation (29 tests total)
 python scripts/test_postgres_schema.py
 python scripts/test_migration_script.py
 
@@ -462,19 +457,20 @@ python tests/verify_pwa_readiness.py
 npm --prefix frontend run build
 ```
 
-### Test Suite Verification Results
+### Verified Test Suite Summary
 
-| Test Category | Suite File | Tests | Pass Status | Coverage Focus |
+| Test Category | Suite File | Tests | Status | Scope |
 | :--- | :--- | :---: | :---: | :--- |
-| **Deterministic Extraction** | `tests/test_ticket_extractor.py` | 8 | ✅ 8 / 8 | Hindi, English, Hinglish, delivery dates, device categorization |
-| **Database Adapter** | `scripts/test_adapter.py` | 29 | ✅ 29 / 29 | SQLite & PostgreSQL parity, query sanitization, `?` conversion |
-| **First-Run Seed** | `scripts/test_seed_setup.py` | 16 | ✅ 16 / 16 | Zero-shop detection, seed password fallback, idempotency |
-| **Security & Auth** | `scripts/test_batch2_security.py` | 31 | ✅ 31 / 31 | Multi-tenant isolation, session tokens, password rotation, CORS |
-| **PostgreSQL Schema** | `scripts/test_postgres_schema.py` | 18 | ✅ 18 / 18 | Neon foreign keys, triggers, constraints, precision |
-| **Data Migration** | `scripts/test_migration_script.py` | 11 | ✅ 11 / 11 | SQLite-to-PostgreSQL sequence sync and data fidelity |
-| **Bugfix Regressions** | `scripts/test_batch1_2_fixes.py` | 18 | ✅ 18 / 18 | Session longevity, customer phone linking, edge cases |
-| **PWA Readiness** | `tests/verify_pwa_readiness.py` | 25 | ✅ 25 / 25 | Manifest keys, maskable icons, Service Worker rules |
-| **Frontend Production** | `npm run build` | — | ✅ 0 Errors | TypeScript type checking, asset minification, Workbox compilation |
+| **Deterministic Extraction** | `tests/test_ticket_extractor.py` | 13 | ✅ Passed | Hindi, English, Hinglish, delivery dates, device types |
+| **Database Adapter** | `scripts/test_adapter.py` | 29 | ✅ Passed | SQLite & PostgreSQL parity, query sanitization, `?` conversion |
+| **First-Run Seed** | `scripts/test_seed_setup.py` | 16 | ✅ Passed | Zero-shop detection, seed password fallback, idempotency |
+| **Security & Auth** | `scripts/test_batch2_security.py` | 31 | ✅ Passed | Multi-tenant isolation, session tokens, password rotation, CORS |
+| **PostgreSQL Schema** | `scripts/test_postgres_schema.py` | 18 | ✅ Passed | Neon foreign keys, triggers, constraints, precision |
+| **Data Migration** | `scripts/test_migration_script.py` | 11 | ✅ Passed | SQLite-to-PostgreSQL sequence sync and data fidelity |
+| **Bugfix Regressions** | `scripts/test_batch1_2_fixes.py` | 18 | ✅ Passed | Session longevity, customer phone linking, edge cases |
+| **Batch 1 Security** | `scripts/test_batch1_security.py` | 33 | ✅ Passed | Auth route guards, rate limiting, password rotation |
+| **PWA Readiness** | `tests/verify_pwa_readiness.py` | 4 checks | ✅ Passed | Manifest keys, maskable icons, Service Worker rules |
+| **Frontend Production** | `npm run build` | — | ✅ Passed | TypeScript check, asset minification, Workbox compilation |
 
 ---
 
@@ -483,7 +479,7 @@ npm --prefix frontend run build
 ### 1. Dual-Engine Deployment Architecture
 
 - **Local / Single-Server Deployment:** Runs on SQLite. Every backend startup triggers an automated online snapshot via `sqlite3.Connection.backup()`, written to `backups/` and retained for 30 days.
-- **Cloud Scale (Render + Neon PostgreSQL):** Setting `DATABASE_URL=postgresql://...` automatically engages the `asyncpg` connection pool. SQLite backup routines are safely bypassed in PostgreSQL mode to prevent runtime disk errors.
+- **Cloud Scale (Render + Neon PostgreSQL):** Setting `DATABASE_URL=postgresql://...` automatically engages the `asyncpg` connection pool. SQLite backup routines are safely skipped in PostgreSQL mode to avoid disk errors.
 
 ### 2. Strict Production CORS Enforcement
 
@@ -502,7 +498,7 @@ npm --prefix frontend run build
 - **Environment Variables Required:**
   - `DATABASE_URL` = Your Neon PostgreSQL connection string
   - `BOLTI_ENV` = `production`
-  - `BOLTI_CORS_ORIGINS` = `https://your-frontend-domain.vercel.app`
+  - `BOLTI_CORS_ORIGINS` = Your frontend URL
   - `GNANI_API_KEY_ID` = Your Gnani API key
 
 #### Frontend Application (Vercel / Render Static Site):
@@ -511,7 +507,7 @@ npm --prefix frontend run build
 - **Build Command:** `npm run build`
 - **Output Directory:** `dist`
 - **Environment Variable:**
-  - `VITE_API_BASE_URL` = `https://your-backend-service.onrender.com`
+  - `VITE_API_BASE_URL` = Your backend URL
 
 ---
 
@@ -519,11 +515,11 @@ npm --prefix frontend run build
 
 | Traditional Repair Shop Process | Bolti Slip Voice Workflow | Practical Business Benefit |
 | :--- | :--- | :--- |
-| Handwrite paper slips while holding tools (3–5 minutes per customer) | Speak details in 10 seconds while inspecting the device | **Saves 80%+ intake time; eliminates greasy paper slips** |
-| Customer disputes verbal quotes at pick-up time | Spoken confirmation in Hindi confirms quote aloud on the spot | **Builds transparent customer trust and prevents disputes** |
-| Customer phone numbers scribbled illegibly | Numbers extracted digitally and verified on screen | **Eliminates lost customer contacts and missed notifications** |
-| Paper slips lost or destroyed | Digital job cards indexed with sequential `BLT-XXXX` numbers | **Zero misplaced tickets; instant status retrieval** |
-| Repeat customers treated like first-time visitors | Phone number auto-links to complete customer repair history | **Improves repeat business loyalty and technician context** |
+| Handwrite paper slips while holding tools and handling greasy equipment | Speak details aloud while inspecting the unit; review the draft on screen | **Reduces typing and handwriting friction during active workbench repair tasks** |
+| Customer disputes verbal quotes or delivery dates at pick-up time | Spoken confirmation in Hindi plays aloud across the counter immediately upon saving | **Establishes mutual verbal clarity and customer trust across the counter** |
+| Customer phone numbers scribbled illegibly or lost on chits | Phone numbers extracted and confirmed on screen | **Preserves legible, organized customer contact records** |
+| Paper slips lost, damaged, or misplaced in the shop | Digital job cards indexed with sequential `BLT-XXXX` numbers | **Organized, searchable repair history accessible at any time** |
+| Repeat customers have no past repair history recorded | Phone number auto-links to complete customer repair history | **Provides instant context on past device issues and warranty history** |
 
 ---
 
